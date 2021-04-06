@@ -109,8 +109,8 @@ de capturer uniquement les paquets sur le port HTTP (TCP/80) : `tcpdump 'port ht
 Par défaut, le noyau Linux ignore les paquets qui ne lui sont pas adressés. Peut-être que cela pourrait expliquer en partie pourquoi nous n'avons pas le comportement espéré.
 A l'aide de `ifconfig`, ajoutez une nouvelle interface réseau afin de résoudre le problème.
 
-> Petit coup de pouce: pour ajouter une nouvelle interface réseau avec `ifconfig`, vous pouvez utiliser la commande suivante: `ipconfig eth0:bad <ip> netmask <mask> up` en
-> remplaçant les champs `ip` et `mask` par les bonnes valeurs.
+> Petit coup de pouce: pour ajouter une nouvelle interface réseau avec `ifconfig`, vous pouvez utiliser la commande suivante:
+> `ifconfig eth0:bad <ip> netmask <mask> up` en > remplaçant les champs `ip` et `mask` par les bonnes valeurs.
 
 10. Vérifiez à l'aide de `ifconfig` que votre interface est correctement configurée. Relancez `curl`. Que se passe-t-il ?
 11. Tentez d'expliquer pourquoi, malgré l'ARP spoofing, vous aviez quand même une réponse lors de la question 8.
