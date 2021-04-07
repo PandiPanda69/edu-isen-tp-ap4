@@ -62,6 +62,8 @@ Cette petite entreprise n'a malheureusement aucune documentation concernant le p
 
 1. Récapitulez sous forme de tableau le plan d'adressage du réseau. Indiquez, pour chaque machine, l'adresse IPv4 ainsi que son adresse MAC. Expliquez comment vous avez procédé.
 
+**Faites valider par votre encadrant le plan d'adressage.**
+
 ARP Spoofing
 ============
 
@@ -81,15 +83,15 @@ Pour réaliser l'attaque, nous allons utiliser l'outil [arpspoof](https://linux.
 Afin de voir la magie s'opérer, il est possible de lancer dans le terminal de l'ordinateur de l'administrateur système la commande `watch -n1 arp -a` qui permettra d'actualiser
 toutes les secondes la table ARP. 
 
-En parallèle, dans le terminal du développeur, lancez la commande `arpspoof` avec les bons arguments afin de tomper l'ordinateur du sysadmin pour qu'il pense que l'intranet est
+En parallèle, dans le terminal du développeur, lancez la commande `arpspoof` avec les bons arguments afin de tromper l'ordinateur du sysadmin pour qu'il pense que l'intranet est
 la machine du développeur.
 
 4. Voyez-vous la table ARP changer ? A votre avis, pourquoi ne change-t-elle pas ?
 
-Stoppez `arpspoof` à l'aide de CTRL+C (ça peut mettre un peu de temps, n'hésitez pas à insister).
+Stoppez `arpspoof` à l'aide de CTRL+C (ça peut mettre un peu de temps, l'outil essaie de réannoncer la véritable MAC avant de s'éteindre).
 
-6. Depuis la machine du sysadmin, faites un `curl` vers le serveur de l'intranet puis relancez le `watch`. Voyez-vous un changement ?
-7. Relancez `arpspoof`. Est-ce que la table ARP a changé ? Stoppez `arspoof`, est-ce que vous notez un nouveau changement ?
+6. Depuis la machine du sysadmin, faites un `curl` vers le serveur de l'intranet puis relancez le `watch`. Une nouvelle entrée doit apparaître dans la table ARP. Laquelle ? Pourquoi ?
+7. Relancez `arpspoof` sur la machine du développeur. Est-ce que la table ARP sur la machine du sysadmin a changé ? Expliquez.
 
 Attaque MitM
 ============
