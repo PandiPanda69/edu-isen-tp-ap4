@@ -5,11 +5,11 @@ _Sébastien Mériot_ ([@smeriot](https://twitter.com/smeriot))
 Déroulement
 ===========
 
-Il est prévu de réaliser 4 TPs ensemble en s'appuyant sur la plateforme [MI-LXC](https://github.com/flesueur/mi-lxc) permettant de mettre en oeuvre un environnement réseau virtuel. Les 4 TPs aborderont les thématiques suivantes:
+Il est prévu de réaliser 4 TPs ensemble en s'appuyant sur la plateforme [MI-LXC](https://github.com/flesueur/mi-lxc) permettant de mettre en oeuvre un environnement réseau virtuel. Les 5 TPs aborderont les thématiques suivantes:
 * ARP Spoofing & Mécanismes de Rogue DNS
 * Filtrage des flux réseaux
 * Configuration de procédés cryptographiques
-* Détection d'intrusion
+* Détection et Prévention d'intrusion
 * Réponse à incident
 
 Ces TPs seront à réaliser en groupe de 3 à 4 personnes. Ces groupes seront fixes pour tous les TPs et devront être annoncés dès le début du premier TP.
