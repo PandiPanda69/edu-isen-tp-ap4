@@ -105,9 +105,44 @@ dans la machine du développeur à l'aide de `openssl`.
 Toujours en utilisant `openssl`, nous allons maintenant procéder au [chiffrement asymétrique](https://fr.wikipedia.org/wiki/Cryptographie_asym%C3%A9trique) de notre mot de
 passe.
 
+>Rappel: Alice chiffre avec la clef publique de Bob, et Bob déchiffre avec sa clef privée.
 
-Pretty Good Privacy (PGP)
--------------------------
+C'est au tour de la personne désignée en tant que le développeur de manipuler ! Dans un premier temps, il faut générer le couple clef privée et clef publique. Nous allons générer la clef privée à l'aide du module [genpkey](https://www.openssl.org/docs/man1.1.1/man1/genpkey.html). L'algorithme utilisé sera RSA (nous utiliserons les courbes elliptiques dans un second temps). Vous pouvez utiliser la commande suivante: `openssl genpkey -algorithm RSA -out private_key.pem -pkeyopt rsa_keygen_bits:4096`
+
+Explication des paramètres:
+* algorithm: Nous demandons à générer une clef privée utilisant RSA
+* out: Le fichier où sera écrit la clef
+* pkeyopt: Option additionnelle, ici nous demandons de créer une clef de 4096 bits comme recommandé par l'[ANSSI](https://www.ssi.gouv.fr/uploads/2021/03/anssi-guide-selection_crypto-1.0.pdf) (par défaut, la clef fait 2048 bits)
+
+Vous avez à présent une clef privée RSA. Vous pouvez consulter le fichier pour voir à quoi ça ressemble (ici encore, l'encodage _base64_ est utilisé).
+
+4. Imaginons que le Commercial pirate l'ordinateur du développeur et réussit à obtenir le fichier contenant la clef privée. Est-ce problématique ? Pourquoi ?
+
+Il est fortement recommandé de ne pas générer des clefs privées sans mot de passe. Autrement dit, vous pouvez supprimer cette clef et la recréer en ajoutant le paramètre `-aes256`. Ce paramètre va demander de chiffrer la clef privée de façon symétrique en utilisant _AES256_. Ainsi, même si votre clef privée est compromise, il sera nécessaire à l'attaquant de disposer également de votre mot de passe. Notez le mot de passe, vous en aurez besoin !
+
+A présent, nous allons dériver une clef publique de la clef privée avec la commande `openssl pkey -pubout -in private_key.pem -out public_key.pem`. Puisque vous avez besoin du contenu de la clef privée, le mot de passe de celle-ci vous est demandé. Comparez le contenu des 2 clefs. Partagez la clef publique avec la personne jouant le rôle de l'administrateur système.
+
+5. Comment avez-vous partagé la clef publique ? Est-ce que cela représente un danger quelconque ?
+
+A présent, l'administrateur système va pouvoir chiffrer le mot de passe de la base de données avec la clef publique du développeur. Pour ce faire, exécutez la commande suivante: `openssl rsautl -encrypt -inkey adminsys_pubkey.pem -pubin -out mdp.enc`. Vous serez alors invitez à entrer le message à chiffrer sur `stdin` puis faire `CTRL+D` une fois terminé.
+
+Description de la commande précédente:
+* rsautl: Module utilitaire pour utiliser les algorithmes RSA
+* encrypt: Nous chiffrons un message
+* inkey: Nous utilisons cette clef publique
+* pubin: Indication que la clef `inkey` est une clef publique
+* out: Fichier contenant le résultat
+
+Vous pouvez constater que le fichier écrit est un fichier binaire. A présent, envoyez ce fichier binaire au développeur afin qu'il puisse déchiffrer le contenu et obtenir le mot de passe, en s'inspirant de la commande prédécemment écrite.
+
+6. Dans quelle situation pensez vous privilégiez le chiffrement symétrique à l'asymétrique et vice versa ?
+
+GNU Privacy Guard (GPG)
+-----------------------
+
+`openssl` est un outil très complet et de ce fait, parfois il peut s'avérer pénible à utiliser au quotidien (et surtout, il est source d'erreur si jamais on a le malheur de ne pas comprendre entièrement ce que nous faisons).
+
+Lorsqu'il s'agit de chiffrement pour échanger des messages en êtres humains, dans la grande majorité des cas, nous utilisons le standard [OpenPGP](https://www.openpgp.org/about/) avec l'outil libre `gpg` qui a l'avantage d'être plus intuitif et moins sujet aux erreurs de manipulation qui pourraient représenter un risque pour la confidentialité des données échangées.
 
 ### Chiffrement symétrique
 
