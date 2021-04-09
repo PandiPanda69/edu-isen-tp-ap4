@@ -144,13 +144,122 @@ GNU Privacy Guard (GPG)
 
 Lorsqu'il s'agit de chiffrement pour échanger des messages en êtres humains, dans la grande majorité des cas, nous utilisons le standard [OpenPGP](https://www.openpgp.org/about/) avec l'outil libre `gpg` qui a l'avantage d'être plus intuitif et moins sujet aux erreurs de manipulation qui pourraient représenter un risque pour la confidentialité des données échangées.
 
+Tout comme `openssl`, `gpg` permet de faire du chiffrement symétrique et asymétrique.
+
 ### Chiffrement symétrique
 
+Tout comme précédemment, l'administrateur système va devoir chiffrer un mot de passe qu'il enverra au développeur (répartissez les rôles dans votre groupe).
+
+Comme évoqué précédemment, `gpg` a le mérite d'être plus intuitif. La commande à saisir est donc relativement simple: `gpg --symmetric --pinentry-mode=loopback -a`. Le paramètre `--pinentry-mode` permet d'autoriser la saisie d'un mot de passe en ligne de commande (par défaut, c'est considéré comme non sécurisé). Comme précédemment, le `-a` permet d'encoder le résultat en _base64_.
+
+>Note: _OpenPGP_ [choisira le meilleur algorithme](https://tools.ietf.org/html/rfc4880#section-5.3) à utiliser si vous ne lui en indiquez pas (AES256 par exemple).
+
+7. Après avoir saisi votre mot de passe, saisissez le message à chiffrer et terminé par `CTRL+D`. Quelle différence constatez-vous avec `openssl` ?
+
+Transmettez le message chiffré et le mot de passe à la personne jouant le rôle du développeur à présent afin que celui-ci déchiffre le message. Rien de plus simple: `gpg --decrypt --pinentry-mode=loopback` puis insérez dans `stdin` le message à déchiffrer.
+
 ### Chiffrement asymétrique
+
+Tout comme `openssl`, nous allons commencer par générer notre _bi-clef_ côté développeur. Afin d'anticiper les prochaines manipulations, la personne jouant le rôle de l'administrateur système peut également générer sa _bi-clef_ car ce sera utile. Tapez la commande suivante: `gpg --gen-key --pinentry-mode=loopback`.
+
+8. Par défaut, quel algorithme et quelle longueur de clef ont été sélectionnés par `gpg` pour générer la clef privée ? Combien de temps votre clef est-elle valide ?
+
+Si `gpg` est aussi plébiscité, c'est parcequ'il offre une gestion bien plus facile des correspondances, notamment en maintenant un _trousseau de clef_. C'est pourquoi il vous a été demandé de saisir votre nom et une adresse e-mail. Vous remarquerez aussi que par défaut, `gpg` privilégie la sécurité et vous demande une _passphrase_ et fera expirer votre clef dans 2 ans. Vous pouvez à présent lister les clefs privées de votre trousseau (`gpg --list-secret-keys`) ainsi que les clefs publiques (`gpg --list-keys`). Dans les deux cas, vous devriez voir votre propre clef avec un niveau de confiance positionné par défaut à _ultimate_.
+
+Afin de procéder à l'échange des clefs (l'administrateur système partage sa clef publique au développeur, et vice-versa), vous pouvez exporter votre clef publique de la sorte: `gpg -a --export adresse@mail`. Pour importer la clef, rien de plus simple: `gpg --import` puis collez la clef dans `stdin` en terminant si nécessaire par `CTRL+D`. 
+
+Vous pouvez alors lister à notre les clefs publiques dans votre trousseau et voir la nouvelle clef apparaître:
+```bash
+admin@mi-target-admin:~$ gpg --import
+gpg: key 8C24EB0963C8EDF8: public key "Developper <dev@target.lxc>" imported
+gpg: Total number processed: 1
+gpg:               imported: 1
+admin@mi-target-admin:~$ gpg --symmetric --decrypt --pinentry-mode=loopback^C
+admin@mi-target-admin:~$ gpg --list-keys
+gpg: checking the trustdb
+gpg: marginals needed: 3  completes needed: 1  trust model: pgp
+gpg: depth: 0  valid:   1  signed:   0  trust: 0-, 0q, 0n, 0m, 0f, 1u
+gpg: next trustdb check due at 2023-04-09
+/home/admin/.gnupg/pubring.kbx
+------------------------
+pub   rsa3072 2021-04-09 [SC] [expires: 2023-04-09]
+      72D0C8EDD1CECA95B80E794A3DE32DF2C67F97B8
+uid           [ultimate] Admin <admin@target.lxc>
+sub   rsa3072 2021-04-09 [E] [expires: 2023-04-09]
+
+pub   rsa3072 2021-04-09 [SC] [expires: 2023-04-09]
+      EF209DD69A5E1DC678C69B2F8C24EB0963C8EDF8
+uid           [ unknown] Developper <dev@target.lxc>
+sub   rsa3072 2021-04-09 [E] [expires: 2023-04-09]
+```
+
+L'administrateur est alors prêt pour chiffrer le mot de passe à envoyer au développeur: `gpg -a --encrypt --recipient dev@target.lxc`. La confiance accordée à la clef du développeur étant _inconnue_ (confiance par défaut), un message vous demandera si vous êtes certain de lui faire confiance. Saisissez alors le message sur `stdin` en terminant par `CTRL+D`.
+
+> Protips: Si vous souhaitez être sympa avec votre destinataire, n'hésitez pas à mettre un retour à la ligne avant de saisir `CTRL+D`. Cela sera plus élégant lors du déchiffrement dans ton terminal.
+
+Transmettez le message chiffré au développeur pour qu'il puisse le déchiffrer
+
+9. Comparez rapidement `openssl` et `gpg`. Seriez-vous d'accord pour dire que `gpg` est plus facile d'utilisation au quotidien que `openssl` ? Pourquoi ?
+10. Seriez-vous capable de dire qu'il s'agit bien de l'administrateur système qui vous a fait parvenir ce mot de passe ? Prenez un exemple pour illustrer votre réponse.
 
 Signature d'un message
 ======================
 
+Comme abordé lors du cours, la confidentialité n'est pas la seule problématique que la cryptographie tente d'adresser (en définitive, il y a beaucoup de problématiques). Nous allons maintenant nous pencher sur la capacité d'attester qu'un message a été produit par une personne de confiance et que celui-ci n'a pas été altéré. Pour cela, nous allons devoir considérer que le développeur et l'administrateur système se connaissent bien, et qu'ils ont échangé leur clef publique en sachant qu'il s'agissait bien de la clef de l'un et de l'autre.
+
+Pour concrétiser cette confiance, l'administrateur système et le développeur vont mutuellement changer la confiance des clefs publiques:
+```bash
+dev@mi-target-dev:~$ gpg --edit-key admin@target.lxc
+gpg (GnuPG) 2.2.12; Copyright (C) 2018 Free Software Foundation, Inc.
+This is free software: you are free to change and redistribute it.
+There is NO WARRANTY, to the extent permitted by law.
+
+pub  rsa3072/3DE32DF2C67F97B8
+     created: 2021-04-09  expires: 2023-04-09  usage: SC  
+     trust: unknown       validity: unknown
+sub  rsa3072/3AEF626563676AA7
+     created: 2021-04-09  expires: 2023-04-09  usage: E   
+[ unknown] (1). Admin <admin@target.lxc>
+
+gpg> trust
+pub  rsa3072/3DE32DF2C67F97B8
+     created: 2021-04-09  expires: 2023-04-09  usage: SC  
+     trust: unknown       validity: unknown
+sub  rsa3072/3AEF626563676AA7
+     created: 2021-04-09  expires: 2023-04-09  usage: E   
+[ unknown] (1). Admin <admin@target.lxc>
+
+Please decide how far you trust this user to correctly verify other users' keys
+(by looking at passports, checking fingerprints from different sources, etc.)
+
+  1 = I don't know or won't say
+  2 = I do NOT trust
+  3 = I trust marginally
+  4 = I trust fully
+  5 = I trust ultimately
+  m = back to the main menu
+
+Your decision? 5
+Do you really want to set this key to ultimate trust? (y/N) y
+
+pub  rsa3072/3DE32DF2C67F97B8
+     created: 2021-04-09  expires: 2023-04-09  usage: SC  
+     trust: ultimate      validity: unknown
+sub  rsa3072/3AEF626563676AA7
+     created: 2021-04-09  expires: 2023-04-09  usage: E   
+[ unknown] (1). Admin <admin@target.lxc>
+```
+
+Nous allons maintenant utiliser la signature pour attester qu'un message a été écrit par l'administrateur système, et qu'il est bien destiné au développeur. `gpg` propose plusieurs formes de signatures:
+- Signature & chiffrement, c'est-à-dire que le message sera chiffré et signé (`--sign`)
+- Signature sans chiffrement avec formattage, c'est-à-dire que le message ne sera pas chiffré mais qu'un format sera imposé par `gpg` pour faciliter la vérification (`--clear-sign`)
+- Signature détachée sans chiffrement, la signature sera générée à part et la vérification de la signature devra se faire manuellement (`--detach-sign`)
+
+Nous allons utiliser le paramètre `--clear-sign` qui est le plus couramment utiliser par les plugins de clients mail. Imaginons que le développeur souhaite indiquer à l'administrateur système qu'il a bien reçu le mot de passe. Transmettez le résultat à l'administrateur système.
+
+L'administrateur système peut alors vérifier que le message provient bien du développeur via la commande `gpg --verify` (notez la date à laquelle le message a été signé est également indiquée).
+
+11. Imaginons maintenant que le message a été intercepté et altéré par le méchant Charlie ! Pour simuler ce cas, modifiez le message à la main puis relancez la vérification. Que constatez-vous ?
 
 Chiffrement d'une connexion
 ===========================
