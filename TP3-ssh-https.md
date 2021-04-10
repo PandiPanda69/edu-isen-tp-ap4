@@ -261,11 +261,44 @@ L'administrateur système peut alors vérifier que le message provient bien du d
 
 11. Imaginons maintenant que le message a été intercepté et altéré par le méchant Charlie ! Pour simuler ce cas, modifiez le message à la main puis relancez la vérification. Que constatez-vous ?
 
+**Prenez quelques minutes avec votre encadrant pour faire le bilan de cette partie.**
+
 Chiffrement d'une connexion
 ===========================
 
+Maintenant que nous avons globalement vu les mécanismes mis en oeuvre dans le chiffrement de correspondance (échange de secrets, échange de clefs, signature, ...), nous allons nous attarder sur la sécurisation d'une connexion entre machines, notamment en s'appuyant sur les protocoles _SSH_ et _HTTPS_.
+
 Secure SHell (SSH)
 ------------------
+
+> Rappel: _SSH_, ou _Secure SHell_, est un protocole et un outil permettant la connexion à distance à des systèmes. C'est le moyen le plus utilisé pour administrer des serveurs distants.
+
+Comme évoqué dans le TP précédent, l'administrateur système de la société _Target_ a pour mission d'administrer l'ensemble du parc informatique. Dans le cadre de sa mission, il n'est pas exclu qu'il doive se connecter à distance aux différents systèmes. Nous allons dans cette partie accompagner l'administrateur système à sécuriser la façon qu'il a de gérer le parc informatique (et il y a du boulot !).
+
+Connectez-vous sur la machine de l'administrateur système avec le user _admin_ (`./mi-lxc.py attach admin@target-admin`).
+
+Nous allons tenter de nous connecter à la machine du commercial. Dans le [TP précédent](https://github.com/PandiPanda69/edu-isen-tp-ap4/blob/main/TP2-Firewall.md), vous avez potentiellement implémenté des règles _iptables_ ainsi qu'un découpage réseau en sous-réseau. Reprenez vos notes et retrouvez l'IP que vous aviez assigné à la machine du commercial et tentez de vous y connecter (`ssh commercial@ip`). Une première question vous est posée, vous demandant si vous faites confiance à cette machine possédant une emprunte ECDSA. Puis un mot de passe vous est alors demandé (il s'agit de _commercial_).
+
+12. Qu'est ce que ECDSA ?
+13. A quoi correspond cette emprunte ?
+14. A quoi correspondant le mot de passe ? A-t-il un lien avec le procédé cryptographique mis en oeuvre pour sécuriser la connexion ?
+15. A votre avis, est-ce une bonne idée de laisser l'authentification par mot de passe en considérant la robustesse de ces mots de passe ?
+
+Malheureusement, nous ne pouvons pas forcément toujours tout maîtriser. Ici, les mots de passe de la machine ont été définis par le _commercial_ lui-même qui ne souhaite pas en changer et votre direction vous a demandé d'arrêter de le déranger pour des "broutilles". Nous allons devoir composer avec.
+
+> Le plus gros risque lorsqu'on intervient sur une machine à distance est de _se couper la patte_, c'est-à-dire appliquer un changement de configuration qui coupe votre accès et vous empêche de vous reconnecter. Il est impératif d'avoir les idées claires et de procéder méthodiquement.
+
+Comme vu en cours, nous allons favoriser l'utilisation d'une authentification par clef publique plutôt que par mot de passe, restreindre l'utilisation de la clef publique, et interdire la connexion à l'utilisateur _root_ en favorisant à la connexion à un compte _admin_ sur la machine du commercial faisant parti des _[sudoers](https://www.digitalocean.com/community/tutorials/how-to-edit-the-sudoers-file-fr)_
+
+16. Définissez les étapes à mettre en oeuvre pour réaliser toutes ces actions sur la machine du commercial. ***Faites valider votre plan de bataille par votre encadrant.***
+
+> Note 1: La configuration du démon _sshd_ se fait par l'intermédiaire du fichier `/etc/ssh/sshd_config`.
+
+> Note 2: Si vous souhaitez utiliser des clefs RSA, prenez garde à la longueur minimale de votre clef (>= 3072 bits).
+
+> Note 3: Vous pourriez avoir besoin de quelques outils pratiques tels que [`ssh-keygen`](https://linux.die.net/man/1/ssh-keygen) ou encore [`ssh-copy-id`](https://linux.die.net/man/1/ssh-copy-id)
+
+> Note 4: Vous pourriez avoir besoin d'éditer votre clef publique et/ou le fichier [`authorized_keys`](https://manpages.debian.org/experimental/openssh-server/authorized_keys.5.en.html#from=_pattern-list_) afin d'y apposer des restrictions
 
 
 HTTPS
