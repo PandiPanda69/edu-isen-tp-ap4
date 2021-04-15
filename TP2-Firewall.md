@@ -108,7 +108,7 @@ Nous avons ici utilisé l'action DROP. Vous pouvez constater que la connexion es
 3. Pourquoi le client SSH met un certains temps à répondre ?
 
 Supprimez la règle iptables précédemment créée.
-Appliquez la même règle en passant la cible de DROP à RESET puis tentez à nouveau de vous connecter en SSH.
+Appliquez la même règle en passant la cible de DROP à REJECT puis tentez à nouveau de vous connecter en SSH.
 
 4. Quel changement observez-vous ? A votre avis pourquoi ? (n'hésitez pas à utiliser `tcpdump` pour comprendre ce qui se passe)
 
