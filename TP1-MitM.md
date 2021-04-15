@@ -90,8 +90,8 @@ la machine du développeur.
 
 Stoppez `arpspoof` à l'aide de CTRL+C (ça peut mettre un peu de temps, l'outil essaie de réannoncer la véritable MAC avant de s'éteindre).
 
-6. Depuis la machine du sysadmin, faites un `curl` vers le serveur de l'intranet puis relancez le `watch`. Une nouvelle entrée doit apparaître dans la table ARP. Laquelle ? Pourquoi ?
-7. Relancez `arpspoof` sur la machine du développeur. Est-ce que la table ARP sur la machine du sysadmin a changé ? Expliquez.
+5. Depuis la machine du sysadmin, faites un `curl` vers le serveur de l'intranet puis relancez le `watch`. Une nouvelle entrée doit apparaître dans la table ARP. Laquelle ? Pourquoi ?
+6. Relancez `arpspoof` sur la machine du développeur. Est-ce que la table ARP sur la machine du sysadmin a changé ? Expliquez.
 
 Attaque MitM
 ============
@@ -101,12 +101,12 @@ A présent, nous allons réaliser une attaque dite de l'homme du milieu et tente
 Relancez l'attaque d'ARP Spoofing comme vu précédemment. En complément, sur la machine du développeur, lancez l'outil [urlsnarf](https://linux.die.net/man/8/urlsnarf)
 qui vous affichera les requêtes HTTP entrantes.
 
-8. Depuis la machine du sysadmin, faites un `curl` sur l'intranet. Obtenez-vous le résultat escompté ? Comment le savez-vous ?
+7. Depuis la machine du sysadmin, faites un `curl` sur l'intranet. Obtenez-vous le résultat escompté ? Comment le savez-vous ?
 
 Afin de débugger et comprendre l'origine du problème, nous allons capturer le trafic avec `tcpdump`. Sur la machine du développeur, lancez la commande suivante permettant
 de capturer uniquement les paquets sur le port HTTP (TCP/80) : `tcpdump 'port http'`. Puis relancez le `curl`. Enfin, faites CTRL+C sur le `tcpdump`.
 
-9. Analysez le résultat du `tcpdump`. Est-ce que des paquets HTTP ont été interceptés sur notre machine ? Quelle est l'IP de destination ? Quelle est l'IP de notre machine ?
+8. Analysez le résultat du `tcpdump`. Est-ce que des paquets HTTP ont été interceptés sur notre machine ? Quelle est l'IP de destination ? Quelle est l'IP de notre machine ?
 
 Par défaut, le noyau Linux ignore les paquets qui ne lui sont pas adressés. Peut-être que cela pourrait expliquer en partie pourquoi nous n'avons pas le comportement espéré.
 A l'aide de `ifconfig`, ajoutez une nouvelle interface réseau afin de résoudre le problème.
@@ -114,8 +114,8 @@ A l'aide de `ifconfig`, ajoutez une nouvelle interface réseau afin de résoudre
 > Petit coup de pouce: pour ajouter une nouvelle interface réseau avec `ifconfig`, vous pouvez utiliser la commande suivante:
 > `ifconfig eth0:bad <ip> netmask <mask> up` en > remplaçant les champs `ip` et `mask` par les bonnes valeurs.
 
-10. Vérifiez à l'aide de `ifconfig` que votre interface est correctement configurée. Relancez `curl`. Que se passe-t-il ?
-11. Tentez d'expliquer pourquoi, malgré l'ARP spoofing, vous aviez quand même une réponse lors de la question 8.
+9. Vérifiez à l'aide de `ifconfig` que votre interface est correctement configurée. Relancez `curl`. Que se passe-t-il ?
+10. Tentez d'expliquer pourquoi, malgré l'ARP spoofing, vous aviez quand même une réponse lors de la question 8.
 
 Rogue DNS (bonus)
 =================
