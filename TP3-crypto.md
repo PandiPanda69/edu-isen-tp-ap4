@@ -1,8 +1,8 @@
-# TP3 - Chiffrement et Certificats
+# TP3 - Chiffrements
 
 _Sébastien Mériot_ ([@smeriot](https://twitter.com/smeriot))
 
-Durée: 4 heures
+Durée: 2 heures
 
 Préparation de l'environnement
 ==============================
@@ -263,13 +263,10 @@ L'administrateur système peut alors vérifier que le message provient bien du d
 
 **Prenez quelques minutes avec votre encadrant pour faire le bilan de cette partie.**
 
-Chiffrement d'une connexion
-===========================
+Chiffrement d'une connexion SSH
+===============================
 
-Maintenant que nous avons globalement vu les mécanismes mis en oeuvre dans le chiffrement de correspondance (échange de secrets, échange de clefs, signature, ...), nous allons nous attarder sur la sécurisation d'une connexion entre machines, notamment en s'appuyant sur les protocoles _SSH_ et _HTTPS_.
-
-Secure SHell (SSH)
-------------------
+Maintenant que nous avons globalement vu les mécanismes mis en oeuvre dans le chiffrement de correspondance (échange de secrets, échange de clefs, signature, ...), nous allons nous attarder sur la sécurisation d'une connexion entre machines, notamment en s'appuyant sur le protocole _SSH_ (puis nous parlerons de _HTTPS_ lors du prochain TP).
 
 > Rappel: _SSH_, ou _Secure SHell_, est un protocole et un outil permettant la connexion à distance à des systèmes. C'est le moyen le plus utilisé pour administrer des serveurs distants.
 
@@ -300,11 +297,4 @@ Comme vu en cours, nous allons favoriser l'utilisation d'une authentification pa
 
 > Note 4: Vous pourriez avoir besoin d'éditer votre clef publique et/ou le fichier [`authorized_keys`](https://manpages.debian.org/experimental/openssh-server/authorized_keys.5.en.html#from=_pattern-list_) afin d'y apposer des restrictions
 
-
-HTTPS
------
-
-
-Certificats
-===========
 
