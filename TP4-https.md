@@ -106,3 +106,55 @@ Vous devez pour cela :
 * Déclencher la mise à jour du navigateur par le client, en exécutant `updatefox.sh` en tant que root sur la machine `isp-a-home`
 
 La nouvelle CA est ainsi devenue une CA par défaut, reconnue globalement. Vérifiez, après avoir redémarré Firefox, que vous la retrouvez bien dans le magasin de certiticats de Firefox. (Menu _Privacy & Security_, puis _View Certificates_)
+
+Certification du serveur "target-dmz"
+=====================================
+
+Sur le réseau target, vous disposez du serveur "target-dmz" sur lequel il faut déployer du matériel cryptographique pour faire du HTTPS. Vous devrez notamment :
+
+* Générer une paire de clés et obtenir le certificat correspondant depuis la CA MICA, les clés arrivent dans `/etc/letsencrypt/live/www.target.milxc/` (les erreurs de certbot de type "InsecureRequestWarning" peuvent être ignorées, il faut par contre vérifier que son message final confirme bien la création des clés attendues). Durant cette étape, le serveur MICA va transmettre à certbot des défis (sous forme de chaîne aléatoire) puis va venir les requêter via le nom d'hôte demandé dans le certificat. Si cette requête fonctionne, cela montre que le client certbot est bien situé sur le serveur pour lequel il demande un certificat :
+
+		# certbot certonly -n --apache -d www.target.milxc --server https://www.mica.milxc/acme/acme/directory
+
+* Configurer le matériel cryptographique de ce nouveau site dans le fichier `/etc/apache2/sites-enabled/default-ssl.conf` (vous devrez utiliser la chaîne complète de certificats depuis la racine, c'est-à-dire `fullchain.pem`, et la clé `privkey.pem`).
+* Vous devez redémarrer le serveur apache2 après vos modifications : `service apache2 restart`
+
+Connectez-vous maintenant en HTTPS depuis `isp-a-home` (si vous aviez ajouté une exception de sécurité à un moment du TP, retirez-la avant). Tout doit se dérouler sans alerte, visualisez le certificat reçu. (Vous arrivez sur une page par défaut, le dokuwiki est accessible à l'URL `https://www.target.milxc/dokuwiki/`)
+
+Attaques sur un serveur HTTPS
+=============================
+
+Attaque sur la connexion au serveur
+-----------------------------------
+
+Refaites l'attaque du début à l'aide de DNS et vérifiez que la connexion depuis "isp-a-home", lorsqu'elle est routée vers le serveur attaquant, génère bien une alerte de sécurité.
+
+3. Quelle est d'habitude votre réaction face à ce genre d'alerte ? Que pouvons nous en conclure sur la protection et le risque restant avec HTTPS ?
+
+Attaque lors de la création du certificat
+-------------------------------
+
+En reprenant les attaques du début, obtenez depuis "ecorp-infra" un certificat bien signé par MICA lié à l'URL `www.target.milxc`. Ces attaques DNS vont vous permettre de vous faire passer pour Target auprès de mica, lors de la phase de création du certificat.
+
+Validez la réussite en vous connectant depuis "isp-a-home" vers ce faux serveur, maintenant sans alerte de sécurité.
+
+
+Bonus : Authentification mutuelle
+=========================
+
+Mettez en place une authentification des clients par le serveur au moyen de certificats clients.
+
+Déroulé général :
+* Côté serveur (donc "target-dmz"), vous devez limiter l'accès aux seuls clients détenteurs d'un certificat valide. Dans `/etc/apache2/sites-enabled/default-ssl.conf` :
+	* Paramétrez la directive [SSLCACertificateFile](https://httpd.apache.org/docs/2.4/fr/mod/mod_ssl.html#sslcacertificatefile) en obtenant et spécifiant le crt de la CA (root.crt, pas le crt de ce serveur www.target.milxc !)
+	* Décommentez les directive [SSLVerifyClient require](https://httpd.apache.org/docs/2.4/fr/mod/mod_ssl.html#sslverifyclient) et [SSLVerifyDepth](https://httpd.apache.org/docs/2.4/fr/mod/mod_ssl.html#sslverifydepth) pour forcer l'authentification des clients
+* Validez depuis "isp-a-home" que l'accès TLS à `https://www.target.milxc` vous est bien refusé
+* Générez un certificat client sur la machine `mica-infra`. Il faut faire un `step ca certificate "VotreNomÀCertifier" client.crt client.key` et utiliser le provisioner par défaut JWK (pas le ACME). Si le programme `step-ca` a été quitté, il faut le relancer préalablement (`step-ca .step/config/ca.json`)
+* Packagez ensemble ce certificat et cette clé client avec `openssl pkcs12 -export -in client.crt -inkey client.key -out client.p12`
+* Le client (la machine "isp-a-home") doit récupérer ce client.p12 et l'importer dans Firefox (Préférences -> Sécurité -> Certificats -> Mes certificats -> Importer)
+* Validez que l'accès est maintenant autorisé
+
+Révocation
+===========
+
+> Dans Smallstep, la révocation par CRL/OCSP n'est pas (encore) gérée. À la place, les certificats ont par défaut une durée courte (24h) et doivent être renouvelés automatiquement, ce qui limite largement le besoin de révocation explicite. Ce positionnement et toutes les limites de la révocation explicite sont très bien expliqués par les auteurs [ici](https://smallstep.com/blog/passive-revocation/)
