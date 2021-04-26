@@ -49,7 +49,7 @@ Depuis la machine "isp-a-home", ouvrez un navigateur pour vous connecter à `htt
 Imaginons que votre résolveur DNS ait été compromis et que l'entrée DNS pour `www.target.milxc` ait été modifiée pour vous envoyer sur un site frauduleux ! Nous allons simuler cette action en ayant pour objectif que le navigateur, lorsqu'il souhaite se connecter à l'URL `http://www.target.milxc`, arrive en fait sur la machine "ecorp-infra".
 
 Pour simuler la compromission, vous allez altérer l'enregistrement DNS pour `target.milxc` dans la zone du TLD .milxc. Sur la machine "milxc-ns" :
-	* Altération de `/etc/nsd/milxc.zone` pour diriger les requêtes DNS pour `target.milxc` vers 100.81.0.2 (appartenant à ecorp)
+	* Altération de `/etc/nsd/milxc.zone` pour diriger les requêtes DNS pour `target.milxc` vers 100.81.0.2 (appartenant à ecorp) (**attention à IPv6, je vous conseille de supprimer les records IPv6**)
 	* Puis `service nsd restart` (le DNS de ecorp est déjà configuré pour répondre aux requêtes pour `target.milxc`)
 	
 1. Tentez à nouveau de vous rendre sur `www.target.milxc` à l'aide votre navigateur. Que se passe-t-il ? Est-ce transparent ?
