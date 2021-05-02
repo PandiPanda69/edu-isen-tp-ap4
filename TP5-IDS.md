@@ -2,8 +2,7 @@
 
 _Sébastien Mériot ([@smeriot](https://twitter.com/smeriot))_
 
-_Cet énoncé est très fortement inspiré d'un TP créé par François Lesueur ([énoncé original](https://github.com/flesueur/srs/blob/master/tp3-ids.md)) et que nous avons co-animé à l'INSA
-Lyon il y a quelques mois._
+_Cet énoncé est en partie inspiré d'un TP créé par François Lesueur ([énoncé original](https://github.com/flesueur/srs/blob/master/tp3-ids.md)) et que nous avons co-animé à l'INSA Lyon il y a quelques mois._
 
 Durée: 4 heures
 
@@ -173,8 +172,75 @@ Cette configuration n'est pas très sécurisée. En effet, un utilisateur peut d
 Mise en place d'un NIDS
 =======================
 
+`Suricata` est un IDPS réseau et nous allons l'utiliser pour illustrer son utilité. Il est installé sur "target-router". Sa configuration est dans `/etc/suricata/suricata.yaml` et nous allons utiliser le fichier de règles `/etc/suricata/rules/local.rules`. Vous pourrez visualiser les alertes dans le fichier de log `/var/log/suricata/fast.log` (`tail -f /var/log/suricata/fast.log` permet de suivre l'évolution des alertes).
+
+La règle
+```
+ alert tcp 10.0.0.1 80 -> 192.168.1.0/24 111 (content:"Waldo"; msg:"Waldo's here";sid:1001;)
+```
+
+signifie par exemple que :
+
+* On étudie les paquets TCP allant de `10.0.0.1:80` vers le sous-réseau:port `192.168.1.0/24:111` (__attention, les règles sont orientées et Suricata regarde uniquement les paquets allant de la partie gauche de la règle à la partie droite !__)
+* Contenant la chaîne "Waldo"
+* Le log affichera "Waldo's here" s'il y a une correspondance
+* `alert` peut être remplacé par `drop` pour jeter le paquet au lieu de le journaliser (mode __IPS__)
+* Le `sid` est un identifiant de règle, _il doit être unique_
+* Les règles peuvent être composées de nombreux éléments (contenu, taille, expressions régulières, etc.). Tout est ici : [Règles Suricata](https://suricata.readthedocs.io/en/latest/rules/index.html). [`http_stat_code`](https://suricata.readthedocs.io/en/latest/rules/http-keywords.html#http-stat-code) (avec un _ et non un ., attention) permet par exemple de surveiller le code de retour HTTP et [`threshold`](https://suricata.readthedocs.io/en/latest/rules/thresholding.html) de gérér des seuils. <!-- \url{http://manual.snort.org/node32.html}) -->
+
+Lisez les règles présentes dans le fichier `local.rules`. Déclenchez la règle "COMMUNITY WEB-MISC Test Script Access" en accédant au serveur web de la DMZ (`http://www.target.milxc`), par ex. depuis la machine `isp-a-hacker`. La requête est-elle exécutée par le serveur DMZ, malgré l'alerte ?
+
+> Attention: Suite au précédent TP, assurez-vous que l'entrée DNS de `http://www.target.milxc` est correcte et pointe bien vers `100.80.1.2`.
+
+
+De nombreux logiciels malveillants utilisent des _packers_ pour échapper aux signatures des antivirus (entre autre). Le plus connu se nomme [_UPX_](https://upx.github.io/) et il est très facile de faire des signatures permettant de détecter des fichiers en cours de téléchargement ayant été préalablement _packé_ avec _UPX_ : les binaires contiennent la chaîne `Info: This file is packed with the UPX executable packer http://upx.sf.net`.
+Ecrivez une règle afin de détecter quand un fichier packé avec _UPX_ est téléchargé sur le réseau de l'entreprise _target_.
+
+Lorsque vous modifiez les règles, il faut recharger le fichier avec `service suricata reload`. Vous pouvez suivre l'activité de Suricata et l'absence d'erreur à l'intégration des règles dans `/var/log/suricata/suricata.log`.
+
+> Pour tester votre règle, vous pouvez trouver des URLs de malwares packés avec _UPX_ ici :  https://urlhaus.abuse.ch/browse/tag/mozi/.
+
+> Pour avoir un aperçu du type de règles fournies par défaut avec Suricata, vous pouvez exécuter `suricata-oinkmaster-updater` qui téléchargera des listes de règles dans `/etc/suricata/rules/*.rules`.
+
+Dans la configuration préinstallée, Suricata est en écoute seulement (donc "IDS" mais pas "IPS"). D'autres configurations de Suricata permettent de le mettre en interception. Voici les étapes :
+
+* `cp /lib/systemd/system/suricata.service  /etc/systemd/system/suricata.service`
+* Remplacer `--af-packet` par `-q0` dans `/etc/systemd/system/suricata.service`
+* Recharger systemd `systemctl daemon-reload`
+* Utiliser `drop` au lieu de `alert` dans les règles
+* `service suricata restart`
+
+Pour ensuite activer le passage des paquets par Suricata, il faut ajouter une décision NFQUEUE au lieu des décision ACCEPT dans les règles IPTables. Par exemple, pour faire passer par Suricata tout le trafic forwardé :
+`iptables -I FORWARD -j NFQUEUE` (attention, suricata prend des décisions définitives, le reste des règles n'est pas appelé ensuite ! [Une solution plus évoluée utilisant les marques et le mode repeat de Suricata existe.](https://docs.mirantis.com/mcp/latest/mcp-security-best-practices/use-cases/idps-vnf/ips-mode/nfq.html))
+
+Relancez le téléchargement du fichier _packé_, et constatez que votre tentative est tombe bien en _timeout_.
+
 
 Mise en place d'un HIDS (bonus)
 ===============================
 
+OSSEC est un HIDS installé sur la machine "target-dmz". Il permet notamment de surveiller les logs (dont accès/refus d'accès du serveur web) et les fichiers présents sur la machine. Sa configuration se trouve dans `/var/ossec/etc/ossec.conf`.
+
+Les alertes sont dans `/var/ossec/logs/alerts/alerts.log`. Chaque alerte contient un identifiant de règle, qui permet de retrouver la règle originale dans les fichiers `/var/ossec/rules/*.xml`.
+
+### syscheck
+Le module `syscheck` est responsable de surveiller les fichiers présents pour détecter leurs modifications ou même les apparitions de nouveaux fichiers (pas activé par défaut). Il se configure dans la section `<syscheck>` de `/var/ossec/etc/ossec.conf`. Lire la [doc](https://ossec.github.io/docs/manual/syscheck/index.html) et cette réponse de [FAQ](https://www.ossec.net/docs/faq/syscheck.html#why-aren-t-new-files-creating-an-alert).
+
+Sur la machine "target-dmz" les fichiers uploadés sur dokuwiki sont stockés dans `/var/lib/dokuwiki/data/media`. Configurez ce qu'il faut comme indiqué précédemment (une option et une règle) pour obtenir une alerte à chaque nouveau fichier sur le wiki.
+
+Attention :
+* la règle est à ajouter impérativement dans un `<group>` (dans `/var/ossec/rules/local_rules.xml`)
+* `syscheck` fonctionne grâce à des scans réguliers (très lents pour ne pas impacter le système) et compare les résultats avec la base du précédent scan. Il faut donc attendre que le scan soit passé et cela prend un certain temps... On peut le surveiller dans `/var/ossec/logs/ossec.log`
+  * début du scan : "INFO: Starting syscheck database (pre-scan)."
+  * fin du scan (peut prendre plusieurs minutes !) : "INFO: Finished creating syscheck database (pre-scan completed)."
+* comme le processus est long, limitez les dossiers à surveiller au strict minimum (désactivez les dossiers par défaut, mettez juste le dossier dokuwiki)
+
+Pour tester, simulez le dépôt d'un fichier vous même dans le dossier surveillé.
+
+Plutôt qu'attendre on peut déclencher un re-scan du système avec `/var/ossec/bin/agent_control -r -u 000`, mais attention il s'écoule toujours plusieurs (5 ?) minutes entre les scans.
+
+### logs
+Il est aussi possible d'analyser les logs : [doc](https://ossec.github.io/docs/manual/monitoring/index.html)
+
+Lancez depuis la machine "isp-a-hacker" (user "debian) un bruteforce sur le mot de passe de l'admin du wiki avec la commande : `python3 tp/intrusion/dokuwiki.py www.target.milxc` et observez les alertes OSSEC.
 
