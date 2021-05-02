@@ -48,14 +48,127 @@ Rappelons sommairement les différentes étapes d'une attaque de ce type:
 5. Les attaquants exfiltrent les informations vers un serveur distant.
 6. Les attaquants procèdent au chiffrement des données.
 
-En se concentrant **uniquement** sur les points 2, 3 et 5, indiquez quelles solutions techniques (proxy, NIDS, HIDS) vous mettriez en place et à quel endroit.
+En se concentrant **uniquement** sur les points 2, 3 et 5, indiquez quelles solutions techniques (proxy HTTP sortant filtrant, NIDS, HIDS) vous mettriez en place et à quel endroit.
 Rédigez rapidement un plan de bataille pour détecter ce type de scénario.
 
 **Faites valider votre plan de bataille par l'encadrant avant d'aller plus loin.**
 
-Mise en place d'un proxy
-========================
+Mise en place d'un proxy HTTP
+=============================
 
+## Installation
+
+Un proxy HTTP filtrant a l'intérêt de permettre de contrôler de manière fine le contenu accessible par les utilisateurs d'un réseau. Cette technique a l'avantage d'être relativement facile à mettre en place et c'est ce que nous allons voir durant ce TP.
+
+Nous allons utiliser un proxy très connu du nom de `squid` avec son extension `squid-guard` afin de mettre en place un contrôle du flux HTTP. Pour commencer, nous allons les installer sur la machine "target-router".
+
+```bash
+apt-get update
+apt-get install -y squid squidguard
+```
+
+Vous pouvez vérifier la bonne installation de `squid` en forgeant une requête HTTP en utilisant le proxy local sur le port TCP/3128 ce qui vous donnera une réponse similaire à celle-ci :
+```
+# curl -I -x localhost:3128 https://www.isen.fr/
+HTTP/1.1 200 Connection established
+
+HTTP/2 200 
+date: Sun, 02 May 2021 11:43:13 GMT
+server: Apache
+vary: User-Agent,Accept-Encoding
+last-modified: Sun, 02 May 2021 02:01:20 GMT
+accept-ranges: bytes
+content-length: 40774
+x-content-type-options: nosniff
+x-frame-options: sameorigin
+cache-control: max-age=0, no-cache, no-store, must-revalidate
+pragma: no-cache
+expires: Mon, 29 Oct 1923 20:30:00 GMT
+content-type: text/html; charset=UTF-8
+```
+
+Vous pouvez remarquez les 2 codes HTTP 200 qui sont remontés, le premier indiquant la bonne connexion au proxy, la seconde étant la réponse du serveur distant interrogé (isen.fr).
+
+## Configuration du proxy
+
+Par défaut, `squid` joue uniquement le rôle de proxy et permet notamment de mettre en cache des ressources. C'était notamment très utile lorsqu'une entreprise disposait d'une connectivité limitée afin de réduire la bande passante consacrée à la navigation Internet. De nos jours, les proxies ont plutôt un rôle destiné à la sécurité des réseaux. Pour cela, nous allons devons indiquer à `squid` d'utiliser le module `squid-guard` dès lors qu'une URL est visitée afin de savoir s'il faut rediriger l'utilisateur quelque part. Pour ce faire, nous allons ajouter le paramètre de configuration [`url_rewrite_program`](http://www.squid-cache.org/Doc/config/url_rewrite_program/) dans la configuration située dans `/etc/squid/squid.conf` tel que :
+```
+url_rewrite_program /usr/bin/squidGuard -c /etc/squidguard/squidGuard.conf
+```
+
+Il faut également autoriser les IPs du réseau à se connecter car, par défaut, `squid` n'autorise que _localhost_. A la ligne 1408, modifiez la configuration pour ajouter une directive autorisant la sous-réseau de l'entreprise "target" à utiliser le proxy afin d'avoir quelque chose ressemblant à ceci:
+```
+acl allowed_ips src 100.80.0.0/16
+
+http_access allow localhost
+http_access allow allowed_ips
+
+# And finally deny all other access to this proxy
+http_access deny all
+```
+
+Puis on relance squid pour prendre en compte les modifications.
+
+```
+# service squid restart
+# service squid status
+● squid.service - Squid Web Proxy Server
+   Loaded: loaded (/lib/systemd/system/squid.service; enabled; vendor preset: en
+   Active: active (running) since Sun 2021-05-02 13:00:17 CEST; 10s ago
+     Docs: man:squid(8)
+  Process: 1798 ExecStartPre=/usr/sbin/squid --foreground -z (code=exited, statu
+  Process: 1801 ExecStart=/usr/sbin/squid -sYC (code=exited, status=0/SUCCESS)
+ Main PID: 1802 (squid)
+    Tasks: 4 (limit: 3556)
+   Memory: 16.6M
+```
+
+
+La configuration par défaut de `squid-guard` n'est pas correcte et interdit tout trafic. Ouvrez le fichier `/etc/squidguard/squidGuard.conf`. Celui-ci est organisé en 4 grandes catégories:
+- Définition d'horaires d'activité: il est possible d'autoriser le trafic uniquement sur des plages horaires configurées par exemple pour interdire le trafic web le week-end lorsque personne n'est au bureau.
+- Définition de règles en fonction des IPs sources.
+- Définition de règles en fonction des sites de destination.
+- Les ACLs qui sont une combinaison de toutes les règles précédemment définies.
+
+Nous allons nous limiter à un cas simple: interdire l'accès au site `example.com` au développeur et lui interdire de naviguer sur le web le week-end. Lorsqu'il enfreindra cette politique, il sera redirigé sur `perdu.com`. L'admin au contraire pourra faire tout ce qu'il souhaite quand il le souhaite.
+
+Dans un premier temps, nous allons créer un fichier contenant les domaines que nous souhaitons interdire. Créez un nouveau fichier `/etc/squidguard/interdit-domains.txt` et sur la première ligne, ajoutez `example.com`. Maintenant, reprenez le fichier `/etc/squidguard/squidGuard.conf`. Modifiez la variable `dbhome` afin d'indiquer à `squid-guard` de charger le fichier que nous venons de créer au bon endroit: `dbhome /etc/squidguard/`.
+
+Au niveau de la définition des IPs sources, nous allons configurer uniquement 2 groupes:
+- _admin_ composé du routeur et de la machine de l'administrateur réseau
+- _user_ composé des machines du développeur et du commercial. Puisque nous souhaitons contraindre les plages horaires, n'oubliez pas la directive `within`.
+
+> Nous n'utilisons pas ici d'utilisateur. Sachez que `squid` peut demander à ce que les utilisateurs s'authentifient afin de mieux contrôler ce que font les utilisateurs et de définir des politiques en se basant sur les rôles fonctionnels de chacun plutôt qu'en se basant sur le plan d'adressage.
+
+Concernant les destinations, nous allons créer une nouvelle classe intitulée _interdit_ en indiquant à `squid-guard` de lire la liste des domaines dans le fichier "interdit-domains.txt" précédemment créé.
+
+Pour finir, nous devons configurer les ACLs. Celles-ci sont toujours composées d'un cas par défault. Nous aurons donc des ACLs en 3 parties:
+- Le groupe _admin_ n'a aucune restriction (`pass any`)
+- Le groupe _user_, s'il consulte des sites identifiés dans _good_, mais pas dans _interdit_, alors pas de restriction. Sinon, redirection vers `http://perdu.com`.
+- Par défault, interdiction de naviguer sur internet et redirection systématique vers `http://perdu.com`.
+
+Quand vous avez terminé, sauvegardez le fichier et redémarrez `squid`. Pour tester, vous pouvez tester ces scénarios et voir si vous obtenez le comportement attendu:
+```bash
+root@mi-target-router:~# curl -x 100.80.0.1:3128 -i example.com
+# Obtention du contenu example.com
+
+root@mi-target-dev:~# curl -x 100.80.0.1:3128 -i example.com
+# Obtention du contenu de perdu.com
+```
+
+La configuration que nous utilisons est dite _transparente_. Cela signifie que nous ne sommes pas redirigé vers `perdu.com` mais bien que le proxy nous retourne le contenu de `perdu.com` comme s'il s'agissant du contenu de `example.com`. C'est pourquoi nous travaillons uniquement en HTTP. Vous pouvez remarquer qu'en requêtant des sites en HTTPS, `squid` génère une erreur 503. Je vous laisse deviner pourquoi.
+
+## Configuration du navigateur
+
+Notre proxy est en place, nous allons maintenant l'utiliser dans un navigateur. Connectez-vous en mode graphique sur la machine du développeur (`./mi-lxc.py display target-dev`) puis ouvrez le navigateur. Tentez de vous rendre sur `example.com` et constatez qu'aucun filtrage ne vous interdit de vous rendre sur le site.
+
+A présent, ouvrez les préférences de Firefox puis dans l'onglet _General_, cherchez la section _Network Settings_. Cochez _Manuel proxy configuration_ et entrez les informations du proxy HTTP que nous venons d'installer: `100.80.0.1 sur le port 3128`. Sauvegardez puis raffraîchissez la page. Le contenu devrait être réécrit.
+
+> Il se peut que le cache de Firefox vous joue des tours. N'hésitez pas à raffraichir plusieurs fois.
+
+> Généralement, cette configuration s'opère via un fichier _PAC_ ([_Proxy Auto-Configuration_](https://developer.mozilla.org/en-US/docs/Web/HTTP/Proxy_servers_and_tunneling/Proxy_Auto-Configuration_PAC_file)) qui est stocké sur le serveur proxy et qui est configuré au travers du DHCP.
+ 
+Cette configuration n'est pas très sécurisée. En effet, un utilisateur peut décider facilement de contourner la politique de sécurité en supprimant l'utilisation du proxy. Comment feriez-vous pour que l'utilisation de ce proxy ne soit pas contournable ?
 
 Mise en place d'un NIDS
 =======================
