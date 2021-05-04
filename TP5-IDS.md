@@ -143,7 +143,7 @@ Concernant les destinations, nous allons créer une nouvelle classe intitulée _
 
 Pour finir, nous devons configurer les ACLs. Celles-ci sont toujours composées d'un cas par défault. Nous aurons donc des ACLs en 3 parties:
 - Le groupe _admin_ n'a aucune restriction (`pass any`)
-- Le groupe _user_, s'il consulte des sites identifiés dans _good_, mais pas dans _interdit_, alors pas de restriction. Sinon, redirection vers `http://perdu.com`.
+- Le groupe _users_, s'il consulte des sites identifiés dans _good_, mais pas dans _interdit_, alors pas de restriction. Sinon, redirection vers `http://perdu.com`.
 - Par défault, interdiction de naviguer sur internet et redirection systématique vers `http://perdu.com`.
 
 Quand vous avez terminé, sauvegardez le fichier et redémarrez `squid`. Pour tester, vous pouvez tester ces scénarios et voir si vous obtenez le comportement attendu:
