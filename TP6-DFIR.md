@@ -173,12 +173,12 @@ Afin que l'entreprise "Target" ne revive pas cette situation, votre mission est 
 
 Une archive au format zip devrait vour avoir été remise. Elle contient un rapide plan d'adressage du réseau, les différentes configurations `iptables` des machines du réseau, et un fichier retranscrivant un rapide interview de l'administrateur système de l'entreprise "Target" avec votre collègue architecte sécurité.
 
-## Le premier bilan
+## Le premier bilan (15min)
 
 34. Quel(s) commentaire(s) pouvez-vous faire en regardant la configuration `iptables` actuelle ?
 35. A la lecture de l'interview, notez les éléments qui vont semblent positifs, et les éléments négatifs. Faites une appréciation globale du niveau de maturité de l'entreprise sur l'aspect sécurité de l'information.
 
-# Le plan d'action
+## Le plan d'action (1h)
 
 Un plan d'action a pour vocation d'être présenté aux décisionnaires. Vous allez donc devoir préparer un plan d'action que vous présenterez aux responsables de l'entreprise "Target" afin qu'ils valident, ou non, les mesures que vous recommandez.
 
@@ -190,7 +190,7 @@ Un plan d'action a pour vocation d'être présenté aux décisionnaires. Vous al
 | SEC_R | Revoir l'architecture réseau  | Mettre en place une architecture réseau plus sécurisée.  | CRITIQUE | ELEVEE               | IMPORTANT        |    N jours    | Expert réseau |
 | SEC_X | Déployer un outil de sécurité | L'outil X est vraiment génial pour faire de la sécurité. | MOYEN | FAIBLE               | MOYEN            |    K jours    | Admin. Sys.   |
 
-39. En prenant un compte les éléments financiers présentés dans le tableau suivant, déterminez le coût financier approximatif de l'attaque pour l'entreprise "Target". Puis déterminez le coup de la mise en place des recommandations que vous préconisez.
+39. En prenant un compte les éléments financiers présentés dans le tableau suivant, déterminez le coût financier approximatif de l'attaque pour l'entreprise "Target". Puis déterminez le coup de la mise en place des recommandations que vous préconisez (en détaillant vos calculs).
 
 | Type | € |
 | --------- | :---: |
