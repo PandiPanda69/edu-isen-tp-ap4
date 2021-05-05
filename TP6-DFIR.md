@@ -60,70 +60,68 @@ Les équipes techniques de l'entreprise "Target" nous ont transmis l'architectur
 > - Les données sont échangés au travers de paquet `PSH` et un accusé de réception `ACK` est émis à chaque réception.
 > - La connexion se termine correctement avec un paquet `FIN` ou suite à un problème avec un paquet `RST`.
 
-1. Expliquez succintement l'intérêt de savoir que la capture a été réalisée sur l'interface publique. (1min)
-
-> Pour répondre aux questions, notez scrupuleusement toutes les IPs impliquées, les mots de passe que vous identifiez, ou autres moyens d'authentification.
+> __Pour répondre aux questions, notez scrupuleusement toutes les IPs impliquées, les mots de passe que vous identifiez, ou autres moyens d'authentification.__
 
 ## Paquets de 1 à 520 (15min)
 
-2. Quel comportement pouvous-nous observer ?
-3. Est-ce que cela débouche sur un évènement intéressant ? Si oui, pouvez-vous le décrire ?
+1. Quel comportement pouvous-nous observer ?
+2. Est-ce que cela débouche sur un évènement intéressant ? Si oui, pouvez-vous le décrire ?
 
 ## Paquets de 521 à 552 (5min)
 
-4. Décrivez le trafic que vous observez.
-5. Est-ce qu'il y a un lien avec ce que vous avez observé précédemment ?
-6. Est-ce que quelque chose semble différer ?
+3. Décrivez le trafic que vous observez.
+4. Est-ce qu'il y a un lien avec ce que vous avez observé précédemment ?
+5. Est-ce que quelque chose semble différer ?
 
 ## Le paquet 821 (15min)
 
 Les paquets 821 et 823 ont attiré l'attention des experts avec qui vous travaillez. En effet, la requête HTTP POST est volumineuse ce qui traduit un comportement intriguant. 
 
-7. Prenez un peu de temps pour expliquer à quoi correspond le paquet 821 et en quoi il se révèle intéressant.
+6. Prenez un peu de temps pour expliquer à quoi correspond le paquet 821 et en quoi il se révèle intéressant.
 
 ## Paquets 828 à 884 (15min)
 
-8. Quel est le lien avec le paquet 821 ?
-9. Pourriez-vous lister les actions que vous observez ?
+7. Quel est le lien avec le paquet 821 ?
+8. Pourriez-vous lister les actions que vous observez ?
 
 ## Le paquet 861 (25min)
 
 Le paquet 861 suscite un vif intérêt pour les experts qui vous assistent.
 
-10. Pourquoi un tel intérêt ?
-11. Qu'est ce qu'il vous apprend ?
+9. Pourquoi un tel intérêt ?
+10. Qu'est ce qu'il vous apprend ?
 
 ## Paquets 886 à 1078 (15min)
 
 Ces communications ne sont pas conventionnelles et ne s'appuient vraisemblablement pas sur un protocole connu.
 
-12. Pouvez-vous établir un lien entre ces communications et le paquet 861 ?
-13. Quelle est la nature de ces communications ? Que pouvez-vous en conclure ?
+11. Pouvez-vous établir un lien entre ces communications et le paquet 861 ?
+12. Quelle est la nature de ces communications ? Que pouvez-vous en conclure ?
 
 ## Paquets 1092 à 1110 (5min)
 
-14. A quoi correspondent ces paquets ?
-15. Pouvez-vous faire un lien avec les communications précédentes ?
-16. Est-il possible de savoir ce qu'il se passe à partir de cet instant ?
+13. A quoi correspondent ces paquets ?
+14. Pouvez-vous faire un lien avec les communications précédentes ?
+15. Est-il possible de savoir ce qu'il se passe à partir de cet instant ?
 
 ## Paquets 1823 et 1829 (10min)
 
-17. A quoi correspondent ces 2 paquets ?
-18. Est-ce normal de trouver ces 2 paquets un dimanche soir alors qu'aucun salarié n'est au bureau ? Pourquoi ?
+16. A quoi correspondent ces 2 paquets ?
+17. Est-ce normal de trouver ces 2 paquets un dimanche soir alors qu'aucun salarié n'est au bureau ? Pourquoi ?
 
 ## Paquets 1908 et 1910 vs 2381 et 2383 (15min)
 
-19. Est-il possible de faire un parallèle entre ces paquets et les 2 paquets analysés précédemment ?
-20. D'où sont émis les paquets ?
-21. Quelles différences notez-vous entre les 2 premiers et les 2 suivants ?
-22. A quoi correspond le paquet 2383 ? Essayez d'extrapoler à quoi cela peut bien servir.
+18. Est-il possible de faire un parallèle entre ces paquets et les 2 paquets analysés précédemment ?
+19. D'où sont émis les paquets ?
+20. Quelles différences notez-vous entre les 2 premiers et les 2 suivants ?
+21. A quoi correspond le paquet 2383 ? Essayez d'extrapoler à quoi cela peut bien servir.
 
 
 > Historiquement, l'authentification web utilisait un mécanisme connu sous le nom de _Basic Auth_, ou plus précisément l'emploi de l'entête [`Authorization`](https://developer.mozilla.org/en-US/docs/Web/HTTP/Authentication). Les identifiants sont alors transmis en étant encodés en `base64`.
 
 ## Conclusion (15min)
 
-23. Pour conclure vos observations, retracez la chronologie des évènements sous la forme d'un tableau telle que celui-ci:
+22. Pour conclure vos observations, retracez la chronologie des évènements sous la forme d'un tableau telle que celui-ci:
 
 | #      | Action                              | Source     | Cible |
 | :----: | -----------                         | :-----:    | :-----:
@@ -131,9 +129,9 @@ Ces communications ne sont pas conventionnelles et ne s'appuient vraisemblableme
 | 2      | La vulnérabilité  X est exploitée.  | IP X.X.X.X | Machine Y.Y.Y.Y |
 | n      | ...                                 | ...        | ... |
 
-24. Quelle(s) serai(en)t la/les IP(s) utilisée(s) par l'attaquant ?
-25. Notez les mots de passe et autres moyens d'authentification récupérés.
-26. (bonus) Connaissez-vous l'identité précise de l'attaquant ?
+23. Quelle(s) serai(en)t la/les IP(s) utilisée(s) par l'attaquant ?
+24. Notez les mots de passe et autres moyens d'authentification récupérés.
+25. (bonus) Connaissez-vous l'identité précise de l'attaquant ?
 
 
 Récupération des données
@@ -171,7 +169,9 @@ _Durée estimée: 1 heure 15 minutes_
 
 Afin que l'entreprise "Target" ne revive pas cette situation, votre mission est également de leur suggérer des préconisations afin de renforcer la sécurité de leurs systèmes. Pour effectuer ces recommandations, vous allez devoir mobiliser vos connaissances, les analyses que vous avez pu mener, mais aussi faire un rapide audit de la configuration existante.
 
-Une archive au format zip devrait vour avoir été remise. Elle contient un rapide plan d'adressage du réseau, les différentes configurations `iptables` des machines du réseau, et un fichier retranscrivant un rapide interview de l'administrateur système de l'entreprise "Target" avec votre collègue architecte sécurité.
+Une archive au format zip devrait vour avoir été remise. Elle contient les différentes configurations `iptables` des machines du réseau, et un fichier retranscrivant un court interview de l'administrateur système de l'entreprise "Target" avec votre collègue architecte sécurité.
+
+> Vous pouvez retrouver le plan d'adressage [plus haut](#identification-de-lorigine-de-lattaque).
 
 ## Le premier bilan (15min)
 
