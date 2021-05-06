@@ -37,7 +37,7 @@ Identification de l'origine de l'attaque
 
 _Durée estimée: 2 heures 15 minutes_
 
-Par chance, il semblerait qu'une capture réseau de l'attaque soit disponible car un adiministrateur système avait laissé `tcpdump` tourner tout le week-end suite à un debug qu'il avait fait jeudi dernier. Elle devrait vous avoir été remise au format `pcap`.
+Par chance, il semblerait qu'une capture réseau de l'attaque soit disponible car un adiministrateur système avait laissé `tcpdump` tourner tout le week-end suite à un debug qu'il avait fait jeudi dernier. Elle devrait être téléchargeable [ici](https://github.com/PandiPanda69/edu-isen-tp-ap4/raw/main/capture.pcap) au format `pcap`.
 
 Les équipes techniques de l'entreprise "Target" nous ont transmis l'architecture de leur réseau afin de mieux interpréter les traces réseau. D'ailleurs, il est précisé que la capture a été réalisée sur l'interface publique.
 
@@ -141,7 +141,7 @@ _Durée estimée: 30 minutes_
 
 L'entreprise "Target" est en grande difficulté car un fichier qui était présent sur le poste du commercial était d'une importance capitale. Malheureusement, il est dorénavant chiffré. Afin de ne pas payer la rançon, l'entreprise "Target" s'en remet à vous et vous demande s'il est possible de récupérer le fichier original.
 
-Le fichier en question vous a été remis. (SHA1: 75e3bfbcd7f5b79bc4c0d07a86dab0ce2be4e31e)
+Le fichier en question se trouve [ici](https://github.com/PandiPanda69/edu-isen-tp-ap4/raw/main/fichier_client.csv.CRYPTED). (SHA1: 75e3bfbcd7f5b79bc4c0d07a86dab0ce2be4e31e)
 
 ## Analyse du moyen cryptographique employé (2min)
 
@@ -169,7 +169,7 @@ _Durée estimée: 1 heure 15 minutes_
 
 Afin que l'entreprise "Target" ne revive pas cette situation, votre mission est également de leur suggérer des préconisations afin de renforcer la sécurité de leurs systèmes. Pour effectuer ces recommandations, vous allez devoir mobiliser vos connaissances, les analyses que vous avez pu mener, mais aussi faire un rapide audit de la configuration existante.
 
-Une archive au format zip devrait vour avoir été remise. Elle contient les différentes configurations `iptables` des machines du réseau, et un fichier retranscrivant un court interview de l'administrateur système de l'entreprise "Target" avec votre collègue architecte sécurité.
+Une archive au format zip se trouve [ici](https://github.com/PandiPanda69/edu-isen-tp-ap4/raw/main/annexes.zip). Elle contient les différentes configurations `iptables` des machines du réseau, et un fichier retranscrivant un court interview de l'administrateur système de l'entreprise "Target" avec votre collègue architecte sécurité.
 
 > Vous pouvez retrouver le plan d'adressage [plus haut](#identification-de-lorigine-de-lattaque).
 
