@@ -135,7 +135,7 @@ Dans un premier temps, nous allons créer un fichier contenant les domaines que 
 
 Au niveau de la définition des IPs sources, nous allons configurer uniquement 2 groupes:
 - _admin_ composé du routeur et de la machine de l'administrateur réseau
-- _user_ composé des machines du développeur et du commercial. Puisque nous souhaitons contraindre les plages horaires, n'oubliez pas la directive `within`.
+- _users_ composé des machines du développeur et du commercial. Puisque nous souhaitons contraindre les plages horaires, n'oubliez pas la directive `within`. (attention, _user_ est un mot-clef réservé et ne doit pas être utilisé comme nom de groupe)
 
 > Nous n'utilisons pas ici d'utilisateur. Sachez que `squid` peut demander à ce que les utilisateurs s'authentifient afin de mieux contrôler ce que font les utilisateurs et de définir des politiques en se basant sur les rôles fonctionnels de chacun plutôt qu'en se basant sur le plan d'adressage.
 
