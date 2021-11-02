@@ -220,7 +220,7 @@ Un plan d'action a pour vocation d'être présenté aux décisionnaires. Vous al
 | SEC_R | Revoir l'architecture réseau  | Mettre en place une architecture réseau plus sécurisée.  | CRITIQUE | ELEVEE               | IMPORTANT        |    N jours    | Expert réseau |
 | SEC_X | Déployer un outil de sécurité | L'outil X est vraiment génial pour faire de la sécurité. | MOYEN | FAIBLE               | MOYEN            |    K jours    | Admin. Sys.   |
 
-51. En prenant un compte les éléments financiers présentés dans le tableau suivant, déterminez le coût financier approximatif de l'attaque pour l'entreprise "Target". Puis déterminez le coup de la mise en place des recommandations que vous préconisez (en détaillant vos calculs).
+51. En prenant un compte les éléments financiers présentés dans le tableau suivant, déterminez le coût financier approximatif de l'attaque pour l'entreprise "Target". Puis déterminez le coût de la mise en place des recommandations que vous préconisez (en détaillant vos calculs).
 
 | Type | € |
 | --------- | :---: |
