@@ -206,21 +206,21 @@ Une archive au format zip se trouve [ici](https://github.com/PandiPanda69/edu-is
 
 ## Le premier bilan (10min)
 
-22. Quel(s) commentaire(s) pouvez-vous faire en regardant la configuration `iptables` actuelle ?
-23. A la lecture de l'interview, faites un tableau récapitulatif des éléments qui vont semblent positifs, et les éléments négatifs. Faites une appréciation globale du niveau de maturité de l'entreprise sur l'aspect sécurité de l'information.
+48. Quel(s) commentaire(s) pouvez-vous faire en regardant la configuration `iptables` actuelle ?
+49. A la lecture de l'interview, faites un tableau récapitulatif des éléments qui vont semblent positifs, et les éléments négatifs. Faites une appréciation globale du niveau de maturité de l'entreprise sur l'aspect sécurité de l'information.
 
 ## Le plan d'action (50min)
 
 Un plan d'action a pour vocation d'être présenté aux décisionnaires. Vous allez donc devoir préparer un plan d'action que vous présenterez aux responsables de l'entreprise "Target" afin qu'ils valident, ou non, les mesures que vous recommandez.
 
-24. En vous inspirant du tableau présenté ci-dessous (vous pouvez l'adaptez à vos besoins), listez les actions que vous recommanderiez de mettre en place, évaluez (à la louche) le temps d'implémentation, ainsi que le gain en sécurité. L'objectif est de (1) retrouver confiance dans le système actuel en nettoyant ce qui doit être nettoyé et (2) donner la capacité à l'entreprise "Target" de détecter plus rapidement et/ou d'empêcher ce type d'attaque à l'avenir.
+50. En vous inspirant du tableau présenté ci-dessous (vous pouvez l'adaptez à vos besoins), listez les actions que vous recommanderiez de mettre en place, évaluez (à la louche) le temps d'implémentation, ainsi que le gain en sécurité. L'objectif est de (1) retrouver confiance dans le système actuel en nettoyant ce qui doit être nettoyé et (2) donner la capacité à l'entreprise "Target" de détecter plus rapidement et/ou d'empêcher ce type d'attaque à l'avenir.
 
 | Réf.  | Titre                         | Objectifs                                                | Priorité | Complexité d'implém. | Gain en sécurité | Jrs/H estimés | Profil        |
 | :--:  | ----------------------------- | -------------------------------------------------------- | :-------: | :------------------: | :--------------: | :-----------: | :-----------: |
 | SEC_R | Revoir l'architecture réseau  | Mettre en place une architecture réseau plus sécurisée.  | CRITIQUE | ELEVEE               | IMPORTANT        |    N jours    | Expert réseau |
 | SEC_X | Déployer un outil de sécurité | L'outil X est vraiment génial pour faire de la sécurité. | MOYEN | FAIBLE               | MOYEN            |    K jours    | Admin. Sys.   |
 
-25. En prenant un compte les éléments financiers présentés dans le tableau suivant, déterminez le coût financier approximatif de l'attaque pour l'entreprise "Target". Puis déterminez le coup de la mise en place des recommandations que vous préconisez (en détaillant vos calculs).
+51. En prenant un compte les éléments financiers présentés dans le tableau suivant, déterminez le coût financier approximatif de l'attaque pour l'entreprise "Target". Puis déterminez le coup de la mise en place des recommandations que vous préconisez (en détaillant vos calculs).
 
 | Type | € |
 | --------- | :---: |
@@ -241,4 +241,4 @@ Un plan d'action a pour vocation d'être présenté aux décisionnaires. Vous al
 | Abonnement NordVPN | 1€ avec le code promo `LES_VPN_C_EST_TROP_SUPAYR.` |
 
 
-26. Proposez une implémentation des recommandations de votre tableau en _lot_ en développant une ébauche de calendrier que vous pourriez communiquer à l'entreprise "Target" avec, le coût associé à chaque lot. Exemple: _Lot 1 - Sécurisation du système, en commençant maintenant, fin estimée du chantier en juin 2024_, etc...
+52. Proposez une implémentation des recommandations de votre tableau en _lot_ en développant une ébauche de calendrier que vous pourriez communiquer à l'entreprise "Target" avec, le coût associé à chaque lot. Exemple: _Lot 1 - Sécurisation du système, en commençant maintenant, fin estimée du chantier en juin 2024_, etc...
