@@ -11,7 +11,7 @@ Comme indiqué, ces TPs se dérouleront en se basant sur l'environnement [MI-LXC
 
 Pour préparer votre environnement, vous allez avoir besoin de:
 - [Virtual Box](https://www.virtualbox.org/wiki/Downloads)
-- La VM MI-LXC pré-configurée disponible [ici](https://flesueur.irisa.fr/mi-lxc/images/milxc-debian-amd64-1.4.1.ova)
+- La VM MI-LXC pré-configurée disponible [ici](https://flesueur.irisa.fr/mi-lxc/images/milxc-debian-amd64-1.4.2.ova)
 
 Une fois le fichier `OVA` téléchargé, ouvrez `Virtual Box`, puis dans le menu `Fichier`, sélectionnez `Importer un appareil virtuel`. Choisissez le fichier `OVA` et patientez quelques minutes le temps de la création de la machine virtuelle.
 
