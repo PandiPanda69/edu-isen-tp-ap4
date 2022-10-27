@@ -1,4 +1,4 @@
-# TP4 - Digital Forensics & Incident Response
+# TP6 - Digital Forensics & Incident Response
 
 _Sébastien Mériot ([@smeriot](https://twitter.com/smeriot))_
 
@@ -101,7 +101,7 @@ The packet capture has been done on the system administrator laptop.
 10. What is the line 3 of the decoded content ? Recover the clear content and explain how you proceed.
 11. Explain line by line this new content.
 
-## Packets 64 &rarr, 105 (15min)
+## Packets 64 &rarr; 105 (15min)
 
 12. Does the packet 64 confirms your analysis on question 11 ? What is it ?
 13. What is the content of the packet 69 ? What is this ? To who this packet is sent ? Why ?
@@ -146,8 +146,9 @@ It is time to report your findings to your customer.
 29. Write the timeline of what happened and explain how the adversary succeed in getting into the systems of the company.
 30. In such situation, it's still valuable to make sure no backdoor have been put by the adversary on any other system. In order to
     perform a large detection, provide all the IoC you may have identified in a table like this :
+    
 | #      | Indicators                          | Type       | Comment |
-| :----: | -----------                         | :-----:    | :-----:
+| :----: | :-----------:                       | :-----:    | :-----: |
 | 1      | 1.2.3.4                             | IP         | IP used for... |
 | 2      | domain.fr                           | Domain     | Domain name hosting  ... |
 | 3      | https://domain.fr/bad               | URL        | Malicious URL used for ... |
