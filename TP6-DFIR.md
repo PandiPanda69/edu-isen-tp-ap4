@@ -86,7 +86,7 @@ The packet capture has been done on the system administrator laptop.
 ## Packets 28 &rarr; 41 (45min)
 
 3. What is the packet 28 ? What is the reply to packet 28 ?
-4. What kind of information about the behavior of the sysadmin does this packet bring to you ?
+4. What kind of information about the behavior of the commercial does this packet bring to you ?
 5. What is the packet 33 ? What does it mean ?
 6. One of your colleague says the packet 36 is interesting. Why ? What is the response ?
 7. Recover the content of the reponse. What is it ?
