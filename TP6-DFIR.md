@@ -51,7 +51,7 @@ skills are now required to analyze the content of the capture. This is the only 
 and it can be downloaded [here](https://github.com/PandiPanda69/edu-isen-tp-ap4/raw/main/ransom.pcap).
 
 The technical team of the "Target" company provided you the network architecture to help you investigate the packet capture.
-The packet capture has been done on the system administrator laptop.
+The packet capture has been done on the commercial laptop.
 
 | Device            | Description                                         | IP     |
 | :-------:         | -----------                                         | :-----: 
