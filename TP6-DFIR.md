@@ -48,7 +48,7 @@ _Estimated Duration: 3 hours_
 By chance, a network capture is available. The system administrator was debugging a network issue on the laptop of Jean-Michel and
 ran a `tcpdump` which recorded unusual tings. Another analysts in your team have isolated the most interesting packets and your
 skills are now required to analyze the content of the capture. This is the only exploitable trace. The file is using the pcap format
-and it can be downloaded [here](https://github.com/PandiPanda69/edu-insa-srs/raw/main/capture.pcap).
+and it can be downloaded [here](https://github.com/PandiPanda69/edu-isen-tp-ap4/raw/main/ransom.pcap).
 
 The technical team of the "Target" company provided you the network architecture to help you investigate the packet capture.
 The packet capture has been done on the system administrator laptop.
