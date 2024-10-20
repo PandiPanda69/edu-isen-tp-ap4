@@ -197,7 +197,7 @@ In order to avoid the "Target" company facing the same situation, you also have 
 improve its security. To build the action plan, all your cybersecurity knowledge are required as well as the results of the forensics.
 A quick audit of the security of the company can also be helpful.
 
-You can download a [zip file](https://github.com/PandiPanda69/edu-insa-srs/raw/main/annexes.zip) containing several `iptables`
+You can download a [zip file](https://github.com/PandiPanda69/edu-isen-tp-ap4/raw/main/annexes.zip) containing several `iptables`
 configurations found on the network and a quick interview of the system administrator of the "Target" company performed by one of your
 colleague.
 
