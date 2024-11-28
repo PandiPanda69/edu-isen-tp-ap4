@@ -174,7 +174,9 @@ Mise en place d'un NIDS
 
 `Suricata` est un IDPS réseau et nous allons l'utiliser pour illustrer son utilité. Il est installé sur "target-router". Sa configuration est dans `/etc/suricata/suricata.yaml` et nous allons utiliser le fichier de règles `/etc/suricata/rules/local.rules`. Vous pourrez visualiser les alertes dans le fichier de log `/var/log/suricata/fast.log` (`tail -f /var/log/suricata/fast.log` permet de suivre l'évolution des alertes).
 
-La règle
+Par défaut, `Suricata` ne contient aucune règle. Afin de pouvoir faire quelques tests avec des règles simples, nous allons charger des règles fournies par défaut. Dans le fichier `/etc/suricata/suricata.yaml`, rechercher le paramètre de configuration `rule-files`. Une entrée `suricata.rules` est déjà présente. En dessous, rajouter de façon similaire une entrée `local.rules` afin de pouvoir charger ce jeu de règles également puis recharger Suricata afin d'appliquer la nouvelle configuration.
+
+Dans ce jeu de règle, vous pourrez notamment trouver la règle suivante:
 ```
  alert tcp 10.0.0.1 80 -> 192.168.1.0/24 111 (content:"Waldo"; msg:"Waldo's here";sid:1001;)
 ```
