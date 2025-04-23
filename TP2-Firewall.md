@@ -215,7 +215,7 @@ La commande `./mi-lxc.py print` peut vous permettre d'afficher graphiquement l'i
 Comme vu en cours, vous pouvez utiliser les commandes `netstat -laptn` ou bien `ss -lnptu` qui permettent d'afficher les ports en écoute,
 et donc les services, sur une machine donnée.
 
-Votre description (matrice de flux sous forme tabulaire avec les machines sources en lignes et destinations en colonnes et services autorisés dans les
+Votre description (matrice de flux sous forme tabulaire avec les sous-réseaux sources en lignes et destinations en colonnes et services autorisés dans les
 cases, ou graphique) doit être claire et suffisamment précise pour être non ambiguë : un autre étudiant, avec cette description uniquement, devrait pouvoir
 refaire **exactement** la même implémentation avec iptables.
 
