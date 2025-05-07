@@ -10,7 +10,7 @@ Préparation de l'environnement
 Tout comme les précédents [TP](https://github.com/PandiPanda69/edu-isen-tp-ap4/blob/main/TP1-MitM.md), ce TP sera réalisé en s'appuyant sur la plateforme [MI-LXC](https://github.com/flesueur/mi-lxc).
 
 Pour rappel, l'infrastructure déployée simule plusieurs postes dont un SI d'entreprise (firewall, DMZ, intranet, authentification centralisée, serveur de fichiers, quelques postes de travail internes de l'entreprise _Target_),
-une machine d'attaquant "isp-a-hacker" et quelques autres servant à l'intégration de l'ensemble.
+une machine d'attaquant "isp-a-hacker" et quelques autres servants à l'intégration de l'ensemble.
 
 > Pour les curieux, le code de MI-LXC, qui sert à générer cette VM automatiquement, est disponible avec une procédure d'installation documentée [ici](https://github.com/flesueur/mi-lxc)
 
@@ -48,7 +48,7 @@ Afin de commencer en douceur, nous allons nous placer dans la situation où l'ad
 Pour que le scénario soit encore plus réaliste, dans chaque groupe, vous allez désigner la personne qui incarnera l'administrateur système et la personne qui incarnera le
 développeur. Chacun se connectera à sa machine, soit "target-admin" ou "target-dev" (`./mi-lxc.py attach target-admin`).
 
-1. Avant de commenrcer, rappelez la différence entre chiffrement symétrique et chiffrement assymétrique.
+1. Avant de commencer, rappelez la différence entre chiffrement symétrique et chiffrement asymétrique.
 
 OpenSSL (Secure Socket Layer)
 -----------------------------
@@ -92,7 +92,7 @@ Vous avez chiffré votre premier secret de façon symétrique. Voici une explica
 >Note: Il est important de mémoriser les paramètres que vous avez saisis car votre correspondant aura scrupuleusement besoin des mêmes.
 
 2. Essayez de relancer le chiffrement. Obtenez-vous le même _base64_ que précédemment ? Pourquoi selon vous ? (Vous pouvez utiliser le paramètre `-p` pour afficher la valeur
-du sel, de la clef et de l'IV)
+   du sel, de la clef et de l'IV)
 
 
 Passons au déchiffrement. Envoyez le _base64_ obtenu à l'un de vos camarades dans votre groupe. Communiquez lui les bonnes informations pour qu'il puisse déchiffrer le message
@@ -111,7 +111,7 @@ C'est au tour de la personne désignée en tant que le développeur de manipuler
 
 Explication des paramètres:
 * algorithm: Nous demandons à générer une clef privée utilisant RSA
-* out: Le fichier où sera écrit la clef
+* out: Le fichier où sera écrite la clef
 * pkeyopt: Option additionnelle, ici nous demandons de créer une clef de 4096 bits comme recommandé par l'[ANSSI](https://www.ssi.gouv.fr/uploads/2021/03/anssi-guide-selection_crypto-1.0.pdf) (par défaut, la clef fait 2048 bits)
 
 Vous avez à présent une clef privée RSA. Vous pouvez consulter le fichier pour voir à quoi ça ressemble (ici encore, l'encodage _base64_ est utilisé).
@@ -133,9 +133,9 @@ Description de la commande précédente:
 * pubin: Indication que la clef `inkey` est une clef publique
 * out: Fichier contenant le résultat
 
-Vous pouvez constater que le fichier écrit est un fichier binaire. A présent, envoyez ce fichier binaire au développeur afin qu'il puisse déchiffrer le contenu et obtenir le mot de passe, en s'inspirant de la commande prédécemment écrite.
+Vous pouvez constater que le fichier écrit est un fichier binaire. A présent, envoyez ce fichier binaire au développeur afin qu'il puisse déchiffrer le contenu et obtenir le mot de passe, en s'inspirant de la commande précédemment écrite.
 
-6. Dans quelle situation pensez vous privilégiez le chiffrement symétrique à l'asymétrique et vice versa ?
+6. Dans quelle situation pensez-vous privilégier le chiffrement symétrique à l'asymétrique et vice versa ?
 
 GNU Privacy Guard (GPG)
 -----------------------
@@ -154,7 +154,7 @@ Comme évoqué précédemment, `gpg` a le mérite d'être plus intuitif. La comm
 
 >Note: _OpenPGP_ [choisira le meilleur algorithme](https://tools.ietf.org/html/rfc4880#section-5.3) à utiliser si vous ne lui en indiquez pas (AES256 par exemple).
 
-7. Après avoir saisi votre mot de passe, saisissez le message à chiffrer et terminé par `CTRL+D`. Quelle différence constatez-vous avec `openssl` ?
+7. Après avoir saisi votre mot de passe, saisissez le message à chiffrer et terminez par `CTRL+D`. Quelle différence constatez-vous avec `openssl` ?
 
 Transmettez le message chiffré et le mot de passe à la personne jouant le rôle du développeur à présent afin que celui-ci déchiffre le message. Rien de plus simple: `gpg --decrypt --pinentry-mode=loopback` puis insérez dans `stdin` le message à déchiffrer.
 
@@ -164,11 +164,11 @@ Tout comme `openssl`, nous allons commencer par générer notre _bi-clef_ côté
 
 8. Par défaut, quel algorithme et quelle longueur de clef ont été sélectionnés par `gpg` pour générer la clef privée ? Combien de temps votre clef est-elle valide ?
 
-Si `gpg` est aussi plébiscité, c'est parcequ'il offre une gestion bien plus facile des correspondances, notamment en maintenant un _trousseau de clef_. C'est pourquoi il vous a été demandé de saisir votre nom et une adresse e-mail. Vous remarquerez aussi que par défaut, `gpg` privilégie la sécurité et vous demande une _passphrase_ et fera expirer votre clef dans 2 ans. Vous pouvez à présent lister les clefs privées de votre trousseau (`gpg --list-secret-keys`) ainsi que les clefs publiques (`gpg --list-keys`). Dans les deux cas, vous devriez voir votre propre clef avec un niveau de confiance positionné par défaut à _ultimate_.
+Si `gpg` est aussi plébiscité, c'est parce qu'il offre une gestion bien plus facile des correspondances, notamment en maintenant un _trousseau de clef_. C'est pourquoi il vous a été demandé de saisir votre nom et une adresse e-mail. Vous remarquerez aussi que par défaut, `gpg` privilégie la sécurité et vous demande une _passphrase_ et fera expirer votre clef dans 2 ans. Vous pouvez à présent lister les clefs privées de votre trousseau (`gpg --list-secret-keys`) ainsi que les clefs publiques (`gpg --list-keys`). Dans les deux cas, vous devriez voir votre propre clef avec un niveau de confiance positionné par défaut à _ultimate_.
 
-Afin de procéder à l'échange des clefs (l'administrateur système partage sa clef publique au développeur, et vice-versa), vous pouvez exporter votre clef publique de la sorte: `gpg -a --export adresse@mail`. Pour importer la clef, rien de plus simple: `gpg --import` puis collez la clef dans `stdin` en terminant si nécessaire par `CTRL+D`. 
+Afin de procéder à l'échange des clefs (l'administrateur système partage sa clef publique au développeur, et vice-versa), vous pouvez exporter votre clef publique de la sorte: `gpg -a --export adresse@mail`. Pour importer la clef, rien de plus simple: `gpg --import` puis collez la clef dans `stdin` en terminant si nécessaire par `CTRL+D`.
 
-Vous pouvez alors lister à notre les clefs publiques dans votre trousseau et voir la nouvelle clef apparaître:
+Vous pouvez alors lister les clefs publiques dans votre trousseau et voir la nouvelle clef apparaître:
 ```bash
 admin@mi-target-admin:~$ gpg --import
 gpg: key 8C24EB0963C8EDF8: public key "Developper <dev@target.lxc>" imported
@@ -252,7 +252,7 @@ sub  rsa3072/3AEF626563676AA7
 
 Nous allons maintenant utiliser la signature pour attester qu'un message a été écrit par l'administrateur système, et qu'il est bien destiné au développeur. `gpg` propose plusieurs formes de signatures:
 - Signature & chiffrement, c'est-à-dire que le message sera chiffré et signé (`--sign`)
-- Signature sans chiffrement avec formattage, c'est-à-dire que le message ne sera pas chiffré mais qu'un format sera imposé par `gpg` pour faciliter la vérification (`--clear-sign`)
+- Signature sans chiffrement avec formatage, c'est-à-dire que le message ne sera pas chiffré, mais qu'un format sera imposé par `gpg` pour faciliter la vérification (`--clear-sign`)
 - Signature détachée sans chiffrement, la signature sera générée à part et la vérification de la signature devra se faire manuellement (`--detach-sign`)
 
 Nous allons utiliser le paramètre `--clear-sign` qui est le plus couramment utiliser par les plugins de clients mail. Imaginons que le développeur souhaite indiquer à l'administrateur système qu'il a bien reçu le mot de passe. Transmettez le résultat à l'administrateur système.
@@ -266,7 +266,7 @@ L'administrateur système peut alors vérifier que le message provient bien du d
 Chiffrement d'une connexion SSH
 ===============================
 
-Maintenant que nous avons globalement vu les mécanismes mis en oeuvre dans le chiffrement de correspondance (échange de secrets, échange de clefs, signature, ...), nous allons nous attarder sur la sécurisation d'une connexion entre machines, notamment en s'appuyant sur le protocole _SSH_ (puis nous parlerons de _HTTPS_ lors du prochain TP).
+Maintenant que nous avons globalement vu les mécanismes mis en œuvre dans le chiffrement de correspondance (échange de secrets, échange de clefs, signature…), nous allons nous attarder sur la sécurisation d'une connexion entre machines, notamment en s'appuyant sur le protocole _SSH_ (puis nous parlerons de _HTTPS_ lors du prochain TP).
 
 > Rappel: _SSH_, ou _Secure SHell_, est un protocole et un outil permettant la connexion à distance à des systèmes. C'est le moyen le plus utilisé pour administrer des serveurs distants.
 
@@ -274,20 +274,20 @@ Comme évoqué dans le TP précédent, l'administrateur système de la société
 
 Connectez-vous sur la machine de l'administrateur système avec le user _admin_ (`./mi-lxc.py attach admin@target-admin`).
 
-Nous allons tenter de nous connecter à la machine du commercial. Dans le [TP précédent](https://github.com/PandiPanda69/edu-isen-tp-ap4/blob/main/TP2-Firewall.md), vous avez potentiellement implémenté des règles _iptables_ ainsi qu'un découpage réseau en sous-réseau. Reprenez vos notes et retrouvez l'IP que vous aviez assigné à la machine du commercial et tentez de vous y connecter (`ssh commercial@ip`). Une première question vous est posée, vous demandant si vous faites confiance à cette machine possédant une emprunte ECDSA. Puis un mot de passe vous est alors demandé (il s'agit de _commercial_).
+Nous allons tenter de nous connecter à la machine du commercial. Dans le [TP précédent](https://github.com/PandiPanda69/edu-isen-tp-ap4/blob/main/TP2-Firewall.md), vous avez potentiellement implémenté des règles _iptables_ ainsi qu'un découpage réseau en sous-réseau. Reprenez vos notes et retrouvez l'IP que vous aviez assigné à la machine du commercial et tentez de vous y connecter (`ssh commercial@ip`). Une première question vous est posée, vous demandant si vous faites confiance à cette machine possédant une empreinte ECDSA. Puis un mot de passe vous est alors demandé (il s'agit de _commercial_).
 
-12. Qu'est ce que ECDSA ?
-13. A quoi correspond cette emprunte ?
-14. A quoi correspondant le mot de passe ? A-t-il un lien avec le procédé cryptographique mis en oeuvre pour sécuriser la connexion ?
+12. Qu'est-ce que ECDSA ?
+13. A quoi correspond cette empreinte ?
+14. A quoi correspond le mot de passe ? A-t-il un lien avec le procédé cryptographique mis en œuvre pour sécuriser la connexion ?
 15. A votre avis, est-ce une bonne idée de laisser l'authentification par mot de passe en considérant la robustesse de ces mots de passe ?
 
 Malheureusement, nous ne pouvons pas forcément toujours tout maîtriser. Ici, les mots de passe de la machine ont été définis par le _commercial_ lui-même qui ne souhaite pas en changer et votre direction vous a demandé d'arrêter de le déranger pour des "broutilles". Nous allons devoir composer avec.
 
 > Le plus gros risque lorsqu'on intervient sur une machine à distance est de _se couper la patte_, c'est-à-dire appliquer un changement de configuration qui coupe votre accès et vous empêche de vous reconnecter. Il est impératif d'avoir les idées claires et de procéder méthodiquement.
 
-Comme vu en cours, nous allons favoriser l'utilisation d'une authentification par clef publique plutôt que par mot de passe, restreindre l'utilisation de la clef publique, et interdire la connexion à l'utilisateur _root_ en favorisant à la connexion à un compte _admin_ sur la machine du commercial faisant parti des _[sudoers](https://www.digitalocean.com/community/tutorials/how-to-edit-the-sudoers-file-fr)_
+Comme vu en cours, nous allons favoriser l'utilisation d'une authentification par clef publique plutôt que par mot de passe, restreindre l'utilisation de la clef publique, et interdire la connexion à l'utilisateur _root_ en favorisant à la connexion à un compte _admin_ sur la machine du commercial faisant partie des _[sudoers](https://www.digitalocean.com/community/tutorials/how-to-edit-the-sudoers-file-fr)_
 
-16. Définissez les étapes à mettre en oeuvre pour réaliser toutes ces actions sur la machine du commercial. ***Faites valider votre plan de bataille par votre encadrant.***
+16. Définissez les étapes à mettre en œuvre pour réaliser toutes ces actions sur la machine du commercial. ***Faites valider votre plan de bataille par votre encadrant.***
 
 > Note 1: La configuration du démon _sshd_ se fait par l'intermédiaire du fichier `/etc/ssh/sshd_config`.
 
