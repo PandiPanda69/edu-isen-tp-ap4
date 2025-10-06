@@ -227,11 +227,21 @@ Implémentation
 Une fois que la politique réseau a été précédemment définie sur le papier (phase de spécification), nous pouvons passer à l'implémentation dans les
 routeurs (sous-réseaux) et pare-feu (règles de filtrage).
 
-Implémentez votre matrice de flux sur la machine "target-router". Vous aurez besoin de procéder en deux étapes :
+Implémentez votre matrice de flux sur la machine "target-router". Vous aurez besoin de procéder en deux étapes.
 
-* Segmenter le réseau "target" : (et je vous recommande très très fortement de prendre 10 minutes pour visionner cette [vidéo explicative](https://flesueur.irisa.fr/mi-lxc/media/segmentation_milxc.mp4)
+### Avec snster
+
+* Segmentez le réseau "target" :
+    * Éditez `~/mi-lxc/target/group.yml` pour spécifier les interfaces sur le routeur. Il faut ajouter des interfaces sur de nouveaux bridges et découper l'espace 100.80.0.1/16. Enfin, il faut ajouter les interfaces eth2, eth3... ainsi créées à la liste des asdev definies dans le template bgprouter de la machine router.
+    * Modifiez les adresses des interfaces et les bridges des machines internes dans ce même fichier. Vous devrez aussi mettre à jour les serveurs mentionnés dans les paramètres des templates "ldapclient", "sshfs" et "resolv", soit en remplaçant les noms de serveurs par leurs nouvelles adresses IP, soit en mettant à jour les enregistrements DNS correspondants (fichier `/etc/nsd/target.milxc.zone` sur "target-dmz")
+    * Exécutez snster print pour visualiser la topologie redéfinie
+    * Exécutez snster stop && snster renet && snster start pour mettre à jour l'infrastructure déployée
+
+### Avec mi-lxc.py
+
+* Segmenter le réseau "target" :
 	* Éditer `global.json` (dans le dossier `mi-lxc`) pour spécifier les interfaces sur le routeur, dans la section "target".
-	Il faut ajouter des bridges (dont le nom doit commencer par "target-") et découper l'espace 100.80.0.1/16. Enfin, il faut ajouter les interfaces
+	Il faut ajouter des _bridges_ (dont le nom doit commencer par "target-") et découper l'espace 100.80.0.1/16. Enfin, il faut ajouter les interfaces
 	eth2, eth3... ainsi créées à la liste des `asdev` definie juste au-dessus (avec des ';' de séparation entre interfaces)
 	* Éditer `groups/target/local.json` pour modifier les adresses des interfaces et les bridges des machines internes (attention, pour un bridge nommé
 	précédemment "target-dmz", il faut simplement écrire "dmz" ici, la partie "target-" est ajoutée automatiquement). Dans le même fichier vous devrez
@@ -240,6 +250,9 @@ Implémentez votre matrice de flux sur la machine "target-router". Vous aurez be
 	"target-dmz")
 	* Exécuter `./mi-lxc.py print` pour visualiser la topologie redéfinie
 	* Exécuter `./mi-lxc.py stop && ./mi-lxc.py renet && ./mi-lxc.py start` pour mettre à jour l'infrastructure déployée
+
+### Pour finir
+
 * Implémenter de manière adaptée les commandes iptables sur la machine "target-router" (dans la chaîne FORWARD). Si possible dans un script (qui nettoie
 les règles au début), en cas d'erreur. (Vous pouvez utiliser les commandes `iptables-save` et `iptables-apply` notamment.)
 

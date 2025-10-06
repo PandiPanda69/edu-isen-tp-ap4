@@ -221,7 +221,7 @@ Once the network policy has been designed, the implementation can be done on the
 
 Implement your flow matrix on the machine "target-router". You'll need to proceed in 2 steps :
 
-* Seggregate the network "target" : (you shall look at the [following video][vidéo explicative](https://flesueur.irisa.fr/mi-lxc/media/segmentation_milxc.mp4))
+* Seggregate the network "target" : 
   * Edit `global.json` (in the folder `mi-lxc` of the VM) to specify the new interfaces on the router, in the "target" section.
   You have to add new bridges (the name should be suffixed by "target-") and split the network space 100.80.0.1/16. Then, you shall add the interfaces
   eth2, eth3, ... newly created in the list `asdev` defined above (with the ';' delimiter between the interface)
