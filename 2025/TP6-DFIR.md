@@ -14,7 +14,12 @@ requirements:
 - A spreadsheet editor (Excel, Open Office, ...)
 - What you learnt during the module ;
 
-This exercise expects a group of 5 students to send a report explaining how you got the results.
+This exercise expects a group of 5 students to send a report explaining how you got the results. The report can be written in French or in English.
+
+>[!WARNING]
+>The use of a LLM would result in penalities.
+
+
 
 Good luck & have fun.
 
@@ -33,7 +38,7 @@ Read carefully the email before going further: [the email](https://github.com/Pa
 
 Your boss just sent you a message on Signal:
 ```
-The passphrase is: OoghaisiT7oap1queequis
+The passphrase is: uoqu1xo4Ahkoang7sh
 ```
 
 The email came with [an attachment](https://github.com/PandiPanda69/edu-isen-tp-ap4/raw/main/MeetingNotes.pdf.asc) that you should also read carefully since there are valuable information in it.
@@ -160,7 +165,7 @@ _One of your colleagues - a network expert - came to check if you were ok since 
 
 ## Conclusions
 
-38. Are you able to tell whether the tools used by the adversary are already known by the security community ? Tell how you proceed.
+38. What do you think about the network architecture of the victim? Take in consideration your observations in the action plan..
 39. Write the timeline of what happened and explain how the adversary succeed in getting into the systems of the company.
 40. In such situation, it's still valuable to make sure no backdoor have been put by the adversary on any other system. In order to
     perform a large detection, provide all the IoC you may have identified in a table like this :
@@ -188,6 +193,9 @@ _Estimated Duration: 2 hours_
 
 The meeting with the CISO provided a lot of valuable information you can start with to draft a remediation plan. The investigations will also provide a lot of valuable information on what happened and what you can do in order to secure the infrastructure and make sure this situation never happens again.
 
+>[!NOTE]
+>A bit of context is importznt to properly answer the next questions. In this case you are going to consider _CandyRiver_ as a middle size company. The companies is implemented in 4 countries (France - the headquarter, the Netherlands, Poland and Slovenia). Around 2500 people work in the company and the IT hires around 50 people. The revenue on 2024 is 548M€ with a growth of 5%. Given the integrated model of the company, the EBITDA is estimated to 7.5% (41M€).
+
 ## First Statement (20min)
 
 43. What do you think about the security of _CandyRiver_ ? Make a quick table to sum up the pros & cons and evaluate the security maturity of the company.
@@ -199,8 +207,6 @@ The remediation plan is going to be presented to the board of your customer by t
 You are going to prepare this remediation plan with all the actions you think important to improve the company security. The board may
 approve or not your plan depending on the relevance of your proposals and the budget. Even if they are not technical, they can easily
 challenge your propositions so be sure to provide enough information to help them in their decision.
-
-The _CandyRiver_ company is employing 125 people approximatly in France and the Netherlands. The revenue in 2023 of the company was 26M€ and they expect a growth of 5% of their revenue for 2024. The EBITDA is around 6% with 7M€.
 
 The table below shows you a quick example of what is expected (you can adapt it regarding your needs).
 
