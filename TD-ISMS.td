@@ -12,7 +12,7 @@ Vous êtes consultants en société de conseil en cybersécurité avec une appro
 
 Ce client, c'est __Fin'invest__, un éditeur de logiciel d'une centaine de personnes qui développe le logiciel __Simulpret__ utilisé par la majorité des courtiers et des assurances françaises pour évaluer la capacité d'emprunt des particuliers.
 
-__Fin'invest__ se voit challenger par ses clients sur la sécurité des données. N'ayant aujourd'hui aucun _SMSI_, la société a recruté un _RSSI_ afin de démarrer une démarche inspirée de _ISO27001_ afin de rassurer ses clients afin une cible d'obtenir la certification d'ici 2 ans. C'est ce _RSSI_ qui vous mandate pour l'aider dans cette mission. 
+__Fin'invest__ se voit challenger par ses clients sur la sécurité des données. N'ayant aujourd'hui aucun _SMSI_, la société a recruté un _RSSI_ afin de démarrer une démarche inspirée de _ISO27001_ afin de rassurer ses clients avec une cible de certification d'ici 2 ans. C'est ce _RSSI_ qui vous mandate pour l'aider dans cette mission. 
 
 ### Informations sur l'entreprise
 
@@ -20,12 +20,10 @@ Le logiciel traite:
 - __des données personnelles__ (identité, revenus, situation familliale, charges, historiques financiers, ...)
 - il produit une recommandation utilisée dans un processus bancaire réglementé.
 
-L'infrastructure est hébergée dans le cloud en utilisant les solutions __Public Cloud__ de _Scaleway_ et _OVHcloud_ et est administrée par une équipe de 10 SRE.
-La solution est développée par une équipe de 25 personnes (développeurs et architectes) utilisant un `gitlab` hébergé chez _OVHcloud_ pour stocker les sources, solution qui a été adoptée afin d'éviter d'avoir à configurer un _VPN_ pour permettre le télétravail.
+L'infrastructure est hébergée dans le cloud en utilisant les solutions __Public Cloud__ de _Scaleway_ et _OVHcloud_ et est administrée par une équipe de 10 SRE. C'est la seule équipe disposant d'une astreinte.
+La solution est développée par une équipe de 25 personnes (développeurs et architectes) utilisant un `gitlab` hébergé chez _OVHcloud_ pour versionner les sources, solution qui a été adoptée afin d'éviter d'avoir à configurer un _VPN_ pour permettre le télétravail.
 
-Les employés bénéficient de 3 jours de télétravail par semaine avec un parc de postes hétérogènes sous __Windows__ et __Linux__ gérés par une petite équipe IT interne de 3 personnes.
-
-L'équipe de développeurs compte 25 personnes.
+Les employés bénéficient de 3 jours de télétravail par semaine avec un parc de postes hétérogènes sous __Windows__ et __Linux__ gérés par une petite équipe IT interne de 3 personnes. Le _BYOD_ est également autorisé pour le personnel qui préfère travailler avec son propre matériel.
 
 ## Travail demandé
 
