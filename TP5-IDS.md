@@ -12,7 +12,7 @@ Préparation de l'environnement
 Tout comme les [TPs précédents](https://github.com/PandiPanda69/edu-isen-tp-ap4/blob/main/TP1-MitM.md), ce TP sera réalisé en s'appuyant sur la plateforme [MI-LXC](https://github.com/flesueur/mi-lxc).
 
 Pour rappel, l'infrastructure déployée simule plusieurs postes dont un SI d'entreprise (firewall, DMZ, intranet, authentification centralisée, serveur de fichiers, quelques postes de travail internes de l'entreprise _Target_),
-une machine d'attaquant "isp-a-hacker" et quelques autres servant à l'intégration de l'ensemble.
+une machine d'attaquant "isp-a-hacker" et quelques autres servants à l'intégration de l'ensemble.
 
 > Pour les curieux, le code de MI-LXC, qui sert à générer cette VM automatiquement, est disponible avec une procédure d'installation documentée [ici](https://github.com/flesueur/mi-lxc)
 
@@ -32,7 +32,7 @@ Voici un petit résumé des commandes dont vous aurez besoin :
 | attach   | Permet d'avoir un shell sur une machine | ./mi-lxc.py attach root@target-commercial |
 | display  | Lance un serveur X sur la machine cible | ./mi-lxc.py display target-commercial |
 
-Rappel: Vous devez être dnas le répertoire `mi-lxc` pour exécuter ces commandes.
+Rappel: Vous devez être dans le répertoire `mi-lxc` pour exécuter ces commandes.
 
 Etude d'un scénario d'attaque
 =============================
@@ -95,7 +95,7 @@ Par défaut, `squid` joue uniquement le rôle de proxy et permet notamment de me
 url_rewrite_program /usr/bin/squidGuard -c /etc/squidguard/squidGuard.conf
 ```
 
-Il faut également autoriser les IPs du réseau à se connecter car, par défaut, `squid` n'autorise que _localhost_. A la ligne 1408, modifiez la configuration pour ajouter une directive autorisant la sous-réseau de l'entreprise "target" à utiliser le proxy afin d'avoir quelque chose ressemblant à ceci:
+Il faut également autoriser les IPs du réseau à se connecter car, par défaut, `squid` n'autorise que _localhost_. A la ligne 1408, modifiez la configuration pour ajouter une directive autorisant le sous-réseau de l'entreprise "target" à utiliser le proxy afin d'avoir quelque chose ressemblant à ceci:
 ```
 acl allowed_ips src 100.80.0.0/16
 
@@ -161,9 +161,9 @@ La configuration que nous utilisons est dite _transparente_. Cela signifie que n
 
 Notre proxy est en place, nous allons maintenant l'utiliser dans un navigateur. Connectez-vous en mode graphique sur la machine du développeur (`./mi-lxc.py display target-dev`) puis ouvrez le navigateur. Tentez de vous rendre sur `example.com` et constatez qu'aucun filtrage ne vous interdit de vous rendre sur le site.
 
-A présent, ouvrez les préférences de Firefox puis dans l'onglet _General_, cherchez la section _Network Settings_. Cochez _Manuel proxy configuration_ et entrez les informations du proxy HTTP que nous venons d'installer: `100.80.0.1 sur le port 3128`. Sauvegardez puis raffraîchissez la page. Le contenu devrait être réécrit.
+A présent, ouvrez les préférences de Firefox puis dans l'onglet _General_, cherchez la section _Network Settings_. Cochez _Manuel proxy configuration_ et entrez les informations du proxy HTTP que nous venons d'installer: `100.80.0.1 sur le port 3128`. Sauvegardez puis rafraîchissez la page. Le contenu devrait être réécrit.
 
-> Il se peut que le cache de Firefox vous joue des tours. N'hésitez pas à raffraichir plusieurs fois.
+> Il se peut que le cache de Firefox vous joue des tours. N'hésitez pas à rafraichir plusieurs fois.
 
 > Généralement, cette configuration s'opère via un fichier _PAC_ ([_Proxy Auto-Configuration_](https://developer.mozilla.org/en-US/docs/Web/HTTP/Proxy_servers_and_tunneling/Proxy_Auto-Configuration_PAC_file)) qui est stocké sur le serveur proxy et qui est configuré au travers du DHCP.
  
@@ -188,7 +188,7 @@ signifie par exemple que :
 * Le log affichera "Waldo's here" s'il y a une correspondance
 * `alert` peut être remplacé par `drop` pour jeter le paquet au lieu de le journaliser (mode __IPS__)
 * Le `sid` est un identifiant de règle, _il doit être unique_
-* Les règles peuvent être composées de nombreux éléments (contenu, taille, expressions régulières, etc.). Tout est ici : [Règles Suricata](https://suricata.readthedocs.io/en/latest/rules/index.html). [`http_stat_code`](https://suricata.readthedocs.io/en/latest/rules/http-keywords.html#http-stat-code) (avec un _ et non un ., attention) permet par exemple de surveiller le code de retour HTTP et [`threshold`](https://suricata.readthedocs.io/en/latest/rules/thresholding.html) de gérér des seuils. <!-- \url{http://manual.snort.org/node32.html}) -->
+* Les règles peuvent être composées de nombreux éléments (contenu, taille, expressions régulières, etc.). Tout est ici : [Règles Suricata](https://suricata.readthedocs.io/en/latest/rules/index.html). [`http_stat_code`](https://suricata.readthedocs.io/en/latest/rules/http-keywords.html#http-stat-code) (avec un _ et non un ., attention) permet par exemple de surveiller le code de retour HTTP et [`threshold`](https://suricata.readthedocs.io/en/latest/rules/thresholding.html) de gérer des seuils. <!-- \url{http://manual.snort.org/node32.html}) -->
 
 Lisez les règles présentes dans le fichier `local.rules`. Déclenchez la règle "COMMUNITY WEB-MISC Test Script Access" en accédant au serveur web de la DMZ (`http://www.target.milxc`), par ex. depuis la machine `isp-a-hacker`. La requête est-elle exécutée par le serveur DMZ, malgré l'alerte ?
 
@@ -212,10 +212,10 @@ Dans la configuration préinstallée, Suricata est en écoute seulement (donc "I
 * Utiliser `drop` au lieu de `alert` dans les règles
 * `service suricata restart`
 
-Pour ensuite activer le passage des paquets par Suricata, il faut ajouter une décision NFQUEUE au lieu des décision ACCEPT dans les règles IPTables. Par exemple, pour faire passer par Suricata tout le trafic forwardé :
+Pour ensuite activer le passage des paquets par Suricata, il faut ajouter une décision NFQUEUE au lieu des décisions ACCEPT dans les règles IPTables. Par exemple, pour faire passer par Suricata tout le trafic forwardé :
 `iptables -I FORWARD -j NFQUEUE` (attention, suricata prend des décisions définitives, le reste des règles n'est pas appelé ensuite ! [Une solution plus évoluée utilisant les marques et le mode repeat de Suricata existe.](https://docs.mirantis.com/mcp/latest/mcp-security-best-practices/use-cases/idps-vnf/ips-mode/nfq.html))
 
-Relancez le téléchargement du fichier _packé_, et constatez que votre tentative est tombe bien en _timeout_.
+Relancez le téléchargement du fichier _packé_, et constatez que votre tentative tombe bien en _timeout_.
 
 
 Mise en place d'un HIDS (bonus)
@@ -237,7 +237,7 @@ Attention :
   * fin du scan (peut prendre plusieurs minutes !) : "INFO: Finished creating syscheck database (pre-scan completed)."
 * comme le processus est long, limitez les dossiers à surveiller au strict minimum (désactivez les dossiers par défaut, mettez juste le dossier dokuwiki)
 
-Pour tester, simulez le dépôt d'un fichier vous même dans le dossier surveillé.
+Pour tester, simulez le dépôt d'un fichier vous-même dans le dossier surveillé.
 
 Plutôt qu'attendre on peut déclencher un re-scan du système avec `/var/ossec/bin/agent_control -r -u 000`, mais attention il s'écoule toujours plusieurs (5 ?) minutes entre les scans.
 
