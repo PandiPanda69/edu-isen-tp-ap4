@@ -168,14 +168,43 @@ Lors de la séance précédente, vous avez déroulé un scénario d'attaque simp
 Bilan de l'attaque
 ------------------
 
-Audit de l'infrastructure
+Avant de commencer, prenons quelques minutes pour nous raffraîchir la mémoire sur l'attaque mise en oeuvre précédemment.
+En enfilant la capuche du hacker, vous avez executé une chaîne d'attaque (_killchain_) qui pourrait se résumer ainsi :
+1. Accès initial : _spear phishing_ à l'attention du commercial
+2. Persistence sur le poste du commercial à l'aide d'un _reverse shell_
+3. Reconnaissance du réseau de votre victime à l'aide de _nmap_ que vous avez téléchargé depuis votre propre serveur web
+4. Latéralisation sur une machine d'intérêt à l'aide de _ssh_
+5. Recherche de la base client et de la comptabilité
+6. Et possiblement, exfiltration des fichiers d'intérêt
+
+Pour ces 6 étapes, et en vous appuyant sur vos notes précédentes, nous allons documenter les flux réseau impliqués entre les machines sous forme d'un [diagramme de séquence](https://fr.wikipedia.org/wiki/Diagramme_de_s%C3%A9quence) (il existe des outils en ligne pour en générer facilement). Et nous allons commencer par l'accès initial.
+
+Zoom sur les protocoles Mail
+----------------------------
+
+Pour commencer, nous allons rentrer dans la mécanique de l'envoi d'un mail jusqu'à sa réception afin de comprendre les flux réseau entrant en jeu. Voici les principaux protocoles qui vont nous intéresser et qui sont les plus utilisés aujourd'hui :
+- SMTP : Simple Mail Transfer Protocol
+- IMAP : Internet Message Access Protocol
+
+* Prenez quelques instants pour récapituler sous forme de tableau à quoi sert chacun de ces protocoles, si ces protocoles utilisent TCP ou UDP, le numéro de port usuel utilisé, si la communication se fait de serveur à serveur ou de client à serveur, et toutes infos que vous pensez utiles.
+
+A présent que vous comprenez l'usage de ces deux protocoles, il est intéressant de comprendre comment le commercial a réussi à recevoir votre mail. Et cette fois, nous allons nous intéresser au protocole DNS.
+
+Zoom sur le protocole DNS
 -------------------------
+
+De source sûre, vous avez déjà abordé la notion de _DNS_ (_Domain Name Service_). La notion de zone DNS et de champs DNS est clef dans le fonctionnement d'un serveur DNS et je vous invite à vous raffraîchir la mémoire si cela ne vous parle pas.
+
+* Résumez succintement à quoi sert la champ `MX` dans une zone DNS et en quoi cela nous intéresse dans le processus d'envoi de mail.
+
 
 Zoom sur la DMZ
 ---------------
 
-Zoom sur les protocoles Mail
-----------------------------
+Audit de l'infrastructure
+-------------------------
+
+
 
 Ségmentation réseau
 -------------------
