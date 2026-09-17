@@ -14,6 +14,13 @@ Ce projet est à réaliser durant les heures planifiées de travail en autonomie
 - Ce projet s'appuiera sur la plateforme MI-LXC comme détaillé dans le chapitre suivant.
 - L'utilisation de l'IA doit se faire de façon intelligente pour vous permettre de développer votre savoir. Faites preuve d'esprit critique pour éviter les hallucinations (l'énoncé induit en erreur l'IA volontairement). **Lorsque les réponses aux questions s'appuient sur l'IA, indiquez-le et expliquer comment l'IA vous a permis de développer votre raisonnement.**
 
+Accès rapide
+============
+
+- [Séance 1](#séance-1---a-lattaque-)
+- [Séance 2](#séance-2---le-plan-de-remédiation)
+- [Séance 3](#séance-3---la-remédiation)
+
 Préparation de l'environnement
 ==============================
 
@@ -67,7 +74,7 @@ Vous travaillerez exclusivement sur la machine du hacker `isp-a-hacker`. Vous de
 Le fil proposé ne couvre bien sûr pas l'ensemble des possibilités mais vise à montrer la diversité des moyens qu'un attaquant peut mettre en œuvre.
 
 Préparation du cheval de Troie
-==============================
+------------------------------
 
 Pour contrôler la machine du commercial, nous allons créer puis transmettre un cheval de Troie. Notre but est d'obtenir un shell sur la machine du commercial afin de l'utiliser comme pivot. Cependant, comme le firewall n'autorise pas les connexions vers l'intérieur de l'entreprise, nous allons plus spécifiquement envoyer un reverse-shell : c'est la machine du commercial qui initiera la connexion vers la machine du hacker.
 
@@ -84,7 +91,7 @@ done
 * Configurez et manipulez ce script en local pour ouvrir un reverse-shell avec vous-mêmes.
 
 Corruption de la machine du commercial
-======================================
+--------------------------------------
 
 > Une personne de votre groupe devra se mettre dans la peau du commercial. Nul besoin de cravatte, vous devrez uniquement afficher la machine target-commercial en tant que commercial via la commande `./mi-lxc.py display commercial@target-commercial`, puis suivre les instructions du mail. Mais si vous avez un doute, vous pouvez très bien supprimer le mail !
 
@@ -96,7 +103,7 @@ Vous devez maintenant amener le commercial à exécuter votre cheval de Troie su
 * Réalisez une capture d'écran de votre oeuvre à annexer dans votre rapport.
 
 Scan du réseau interne
-======================
+----------------------
 
 Votre netcat vient de recevoir une connexion de la machine du commercial. Wotre reverse-shell a été exécuté ! Votre victime ne se doute de rien, et vous allez pouvoir passer à la prochaine étape du plan.
 
@@ -109,7 +116,7 @@ Il vous faut maintenant explorer le réseau pour trouver votre cible. Le program
 * Réalisez un diagramme modélisant les flux réseaux qui interviennent lorsque vous téléchargez `nmap` puis lorsque vous l'utilisez.
 
 Récupération d'un mot de passe valide
-=====================================
+-------------------------------------
 
 Il serait tout à fait possible de récupérer le mot de passe du commercial sur sa machine, soit (1) à partir de l'[analyse de son profil ClawsMail par exemple](https://github.com/AlessandroZ/LaZagne), soit (2) en ajoutant un piège à son `.bashrc` lui demandant de retaper son mot de passe.
 
@@ -125,27 +132,27 @@ Sinon, implémentez la solution 2 comme suit:
 * Faire une capture d'écran de votre script, du commercial qui saisit son mdp, et de la récupération du mdp. Pour ceux qui ont choisit la solution 1, une capture d'écran de la récupération du mot de passe est suffisante.
 
 Accès à la machine cible
-========================
+------------------------
 
 Pivotez vers la machine hébergeant les données ciblées. Pour faire du SSH, vous aurez besoin d'utiliser [sshpass](https://srvfail.com/how-to-provide-ssh-password-inside-a-script-or-oneliner/) (disponible sur la machine du commercial). Vous pouvez ensuite utiliser la commande `find` avec les bons arguments pour trouver, sur cette machine cible, les fichiers sur lesquels vous pourriez avoir des droits en écriture.
 
 * Faites une petite capture d'écran de l'emplacement de la base clients.
 
 Conclusion
-==========
+----------
 
 Nous avons mis en oeuvre une petite attaque, certes simpliste, mais qui permet d'avoir une première approche d'une chaîne d'attaque et de la préparation amont nécessaire pour dérouler un scénario d'attaque. Ce scénario va nous servir de base afin de pouvoir renforcer la sécurité du réseau de l'entreprise _Target_ en mettant en oeuvre des mécanismes élémentaires de durcissement et de réduction de l'exposition.
 
 * Afin de conclure cette séance, ajouter dans votre rapport ce que vous avez appris durant ces 4h.
 
 Ouverture
-=========
+---------
 
 * [Retour de l'ANSSI sur l'incident de TV5Monde au SSTIC 2017](https://www.dailymotion.com/video/x5qs6c0)
 * [D'un XLSB à un SI entièrement chiffré en 3 jours](https://thedfirreport.com/2021/08/01/bazarcall-to-conti-ransomware-via-trickbot-and-cobalt-strike/)
 
 Disclaimer
-==========
+----------=
 
 ![Bad guy](https://github.com/flesueur/srs/blob/master/media/bad.jpg?raw=true)
 
@@ -153,12 +160,52 @@ _Attention, lui, il l'a fait pour de vrai..._
 
 
 Séance 2 - Le plan de remédiation
-=========================
+=================================
 
-TODO
+Lors de la séance précédente, vous avez déroulé un scénario d'attaque simple. Néanmoins, les techniques abordées (_spear phishing_, _reverse_shell_, _credentials recovery_, découverte du réseau, ...) sont très répandues et ne sont pas très différentes de ce qui peut être employé dans la réalité. Notre objectif à présent va être de corriger le design réseau de l'entreprise _Target_ pour la rendre plus résiliente face à ce type d'attaque.
+
+Bilan de l'attaque
+------------------
+
+Audit de l'infrastructure
+-------------------------
+
+Zoom sur la DMZ
+---------------
+
+Zoom sur les protocoles Mail
+----------------------------
+
+Ségmentation réseau
+-------------------
+
+Plan d'adressage
+----------------
+
+Matrice de flux
+---------------
+
+Conclusion
+----------
+
 
 Séance 3 - La remédiation
 =========================
 
-TODO
+Premiers pas avec `iptables`
+----------------------------
 
+Implémentation de la ségmentation réseau
+----------------------------------------
+
+Implémentation du routage
+------------------------
+
+Verdict final - le rejeu
+------------------------
+
+Contournement par tunnel
+------------------------
+
+Conclusion
+----------
