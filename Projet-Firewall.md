@@ -114,6 +114,7 @@ Il vous faut maintenant explorer le réseau pour trouver votre cible. Le program
 > Pour connaître l'IP de la machine commercial : `/sbin/ifconfig`, utilisable en non-root pour la consultation des paramètres. Vous verrez que c'est un /16, la partie intéressante est au début de ce /16 : comme le scan est long, scannez plutôt les premiers /24.
 
 * Réalisez un diagramme modélisant les flux réseaux qui interviennent lorsque vous téléchargez `nmap` puis lorsque vous l'utilisez.
+* Faites un plan du réseau de l'entreprise _Target_ suite aux résultats de `nmap`.
 
 Récupération d'un mot de passe valide
 -------------------------------------
