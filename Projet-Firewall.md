@@ -177,7 +177,9 @@ En enfilant la capuche du hacker, vous avez executé une chaîne d'attaque (_kil
 5. Recherche de la base client et de la comptabilité
 6. Et possiblement, exfiltration des fichiers d'intérêt
 
-Pour ces 6 étapes, et en vous appuyant sur vos notes précédentes, nous allons documenter les flux réseau impliqués entre les machines sous forme d'un [diagramme de séquence](https://fr.wikipedia.org/wiki/Diagramme_de_s%C3%A9quence) (il existe des outils en ligne pour en générer facilement). Et nous allons commencer par l'accès initial.
+Le travail de cette séance va avoir pour objectif de rendre cette chaîne d'attaque plus difficile à exécuter et dans l'idéal, impossible. Nous ne pourrons pas agir sur tous les points (nous n'allons pas déplyer d'Antispam par exemple ou d'Antivirus). Mais avec quelques bonnes pratiques d'architecture réseau, nous pouvons déjà faire beaucoup pour compliquer la tâche à un potentiel attaquant.
+
+Avant de rentrer dans le détail, un peu de théorie s'impose.
 
 Zoom sur les protocoles Mail
 ----------------------------
@@ -210,20 +212,50 @@ Afin de s'assurer de votre bonne compréhension, prenez le temps de répondre au
 * Une DMZ est-elle une zone de confiance ?
 * Une DMZ héberge-t-elle les données sensibles de l'entreprise ?
 
-Audit de l'infrastructure
--------------------------
+Carthographie de l'infrastructure
+---------------------------------
 
-Maintenant que nous avons pris le temps de poser certaines bases, nous pouvons passer à la partie la plus complexe.
+Maintenant que nous avons pris le temps de poser certaines bases, nous pouvons passer à la partie la plus complexe : carthograpgier une infrastructure existante. Comme discuté en cours, la mise en place d'une nouvelle infrastructure passe systématiquement par une phase de conception donnant lieu à différents documents d'architecture forts utiles pour le maintien en condition opérationnel par la suite. Néanmoins, il arrive parfois que ces documents soient absents ou aient été perdus avec le temps pour les infrastructures les plus vieilles. Ce type de situation implique donc de devoir carthographier l'infrastructure existante afin de faire une rétro-documentation. Cette phase est d'autant plus critique que dans le cadre de la mise en place d'une politique de pare-feu, nous devons impérativement être exhaustif sur les flux identifiés pour éviter de couper des flux indispensables au bon fonctionnement des systèmes.
 
+Nous allons exactement nous positionner dans ce scénario. La société _Target_ ne possède aucune documentation de son réseau et nous allons donc devoir la réaliser afin de pouvoir les conseiller au mieux sur la mise en place de mesures de sécurité efficaces.
+
+> Afin d'avoir une vue d'ensemble, vous pouvez utiliser la commande `print` de la plateforme. *Néanmoins, les informations présentées sont dépendantes de votre résolution d'écran et les adresses IPs ne sont pas forcément placées au bon endroit.* Je vous conseille donc très fortement d'accéder à l'infrastructure directement.
+
+* Récapitulez sous forme de tableau le plan d'adressage du réseau. Indiquez, pour chaque machine, l'adresse IPv4, IPv6 ainsi que son adresse MAC.
+
+Pour rappel, le réseau de l'entreprise est composé de ces différents éléments:
+
+| Machine           | Description |
+| :-------:         | ----------- |
+| target-router     | Routeur de bordure |
+| target-admin      | Ordinateur de l'administrateur système. Il doit pouvoir administrer tout le parc avec le protocole `ssh`. |
+| target-commercial | Ordinateur du commercial. Il doit pouvoir accéder à l'intranet web. |
+| target-dev        | Ordinateur du développeur. Il doit pouvoir mettre à jour l'intranet à l'aide du protocole `ftp`. |
+| target-dmz        | Ensemble de services à l'interface entre le SI et le reste du monde. |
+| target-ldap       | Authentification centralisée, nécessaire à tous les postes du SI (y compris la DMZ). |
+| target-filer      | Partage de fichiers s'appuyant sur `sshfs` qui doit être accessible à tous les postes clients internes. |
+| target-intranet   | Applications web internes, non accessibles au reste du monde. |
+
+* Identifiez-vous plusieurs sous-réseaux dans l'architecture actuelle de la société _Target_ ?
+
+Lors de l'attaque, nous avons utilisé l'outil `nmap` afin de pouvoir énumérer les machines sur le réseau. C'est par ailleurs exactement ce qu'un attaquant ferait dans une telle situation pour faire de la reconnaissance. La facilité avec laquelle vous avez réussi à vous latéraliser sur le réseau réside dans un problème essentiel : le réseau de _Target_ est un réseau dit _à plat_. Concrètement, il n'y a aucune segmentation réseau : tous les équipements (poste de travail, serveurs, téléphones, DMZ, ...) sont tous connectés sur le même réseau, peuvent tous communiquer ensemble, sans aucune restriction, et peu importe leur criticié. De ce fait, lorsque vous avez utilisé `nmap`, vous avez pu découvrir en un clin d'oeil tout ce qui était présent sur le réseau, il ne vous restait plus qu'à pivoter sur la machine d'intérêt.
+Cette conception réseau - bien que fonctionnelle - ne répond pas aux enjeux de sécurité récents et ce type de conception est à proscrire.
 
 Ségmentation réseau
 -------------------
 
-Plan d'adressage
-----------------
+Pour répondre aux enjeux de sécurité, nous allons transformer le réseau de la société _Target_ d'un réseau à plat en un réseau segmenté.
+
+* En vous appuyant sur le plan d'adressage que vous avez documenté précédemment, suggérez une liste de sous-réseaux qui conviendrait pour la société _Target_. Pour chaque sous-réseau, donnez lui un nom et détaillez quelles machines seraient reliées à ce réseau (en mettant le routeur de côté pour le moment). Définissez un sous-réseau IPv4 et IPv6 à chacun d'eux.
+
+* Faites un diagramme de conception du nouveau réseau que vous préconiseriez. Faites apparaître les adresses IPs des différentes interfaces (y compris le routeur cette fois).
 
 Matrice de flux
 ---------------
+
+Maintenant que vous avez défini la nouvelle architecture réseau, nous allons devoir identifier précisément les flux entre les machines et les documenter afin de réaliser la matrice flux. Cette dernière sera notre support pour la 3ème séance afin d'implémenter cette nouvelle architecture réseau (et peut-être, améliorer la sécurité de la société _Target_).
+
+Pour rappel une matrice de flux permet de documenter les flux provenant d'une source et allant à une destination.
 
 Conclusion
 ----------
@@ -249,3 +281,5 @@ Contournement par tunnel
 
 Conclusion
 ----------
+
+
