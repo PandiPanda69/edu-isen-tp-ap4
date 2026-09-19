@@ -182,7 +182,7 @@ Pour ces 6 étapes, et en vous appuyant sur vos notes précédentes, nous allons
 Zoom sur les protocoles Mail
 ----------------------------
 
-Pour commencer, nous allons rentrer dans la mécanique de l'envoi d'un mail jusqu'à sa réception afin de comprendre les flux réseau entrant en jeu. Voici les principaux protocoles qui vont nous intéresser et qui sont les plus utilisés aujourd'hui :
+Pour débuter, nous allons rentrer dans la mécanique de l'envoi d'un mail jusqu'à sa réception afin de comprendre les flux réseau entrant en jeu. Voici les principaux protocoles qui vont nous intéresser et qui sont les plus utilisés aujourd'hui :
 - SMTP : Simple Mail Transfer Protocol
 - IMAP : Internet Message Access Protocol
 
@@ -201,9 +201,19 @@ De source sûre, vous avez déjà abordé la notion de _DNS_ (_Domain Name Servi
 Zoom sur la DMZ
 ---------------
 
+La notion de _DMZ_ (ou Zone Démilitarisée en français) est une notion qui vous est peut-être abstraite. Pourtant, c'est une notion clef en réseau et peut-être que sans le savoir, vous en avez déjà configurée une à la maison au travers de règles NAT. Je vous invite à prendre le temps de lire l'[article suivant](https://www.nexa.fr/blog/dmz-quest-ce-que-cest) afin de vous familiariser avec cette notion.
+
+Afin de s'assurer de votre bonne compréhension, prenez le temps de répondre aux questions suivantes afin de vous assurer que la notion est claire dans vos esprits :
+* Une DMZ est-elle exposée sur Internet ?
+* Une DMZ est-elle exposée sur le LAN ?
+* Une DMZ est-elle libre de communiquer avec le LAN ?
+* Une DMZ est-elle une zone de confiance ?
+* Une DMZ héberge-t-elle les données sensibles de l'entreprise ?
+
 Audit de l'infrastructure
 -------------------------
 
+Maintenant que nous avons pris le temps de poser certaines bases, nous pouvons passer à la partie la plus complexe.
 
 
 Ségmentation réseau
