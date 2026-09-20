@@ -114,7 +114,7 @@ Il vous faut maintenant explorer le réseau pour trouver votre cible. Le program
 > Pour connaître l'IP de la machine commercial : `/sbin/ifconfig`, utilisable en non-root pour la consultation des paramètres. Vous verrez que c'est un /16, la partie intéressante est au début de ce /16 : comme le scan est long, scannez plutôt les premiers /24.
 
 * Réalisez un diagramme modélisant les flux réseaux qui interviennent lorsque vous téléchargez `nmap` puis lorsque vous l'utilisez.
-* Faites un plan du réseau de l'entreprise _Target_ suite aux résultats de `nmap`.
+* Réalisez un diagramme de l'architecture réseau de l'entreprise _Target_ suite aux résultats de `nmap`.
 
 Récupération d'un mot de passe valide
 -------------------------------------
@@ -142,8 +142,9 @@ Pivotez vers la machine hébergeant les données ciblées. Pour faire du SSH, vo
 Conclusion
 ----------
 
-Nous avons mis en oeuvre une petite attaque, certes simpliste, mais qui permet d'avoir une première approche d'une chaîne d'attaque et de la préparation amont nécessaire pour dérouler un scénario d'attaque. Ce scénario va nous servir de base afin de pouvoir renforcer la sécurité du réseau de l'entreprise _Target_ en mettant en oeuvre des mécanismes élémentaires de durcissement et de réduction de l'exposition.
+Nous avons mis en oeuvre une petite attaque, certes simpliste, mais qui permet d'avoir une première approche d'une chaîne d'attaque et de la préparation amont nécessaire pour dérouler un scénario d'attaque. Ce scénario va nous servir de base afin de pouvoir renforcer la sécurité du réseau de l'entreprise _Target_ en identifiant les défaillances afin de mieux pouvoir les corriger.
 
+* Récapitulez sous forme d'un diagramme de séquence les communications qui vous ont permis de progresser depuis le poste du commercial jusqu'aux données sensibles. A votre avis, pourquoi le réseau actuel ne l'en a t-il pas empêché ?
 * Afin de conclure cette séance, ajouter dans votre rapport ce que vous avez appris durant ces 4h.
 
 Ouverture
@@ -160,7 +161,7 @@ Disclaimer
 _Attention, lui, il l'a fait pour de vrai..._
 
 
-Séance 2 - Le plan de remédiation
+Séance 2 - Le plan de remédiation [_Work in Progress_]
 =================================
 
 Lors de la séance précédente, vous avez déroulé un scénario d'attaque simple. Néanmoins, les techniques abordées (_spear phishing_, _reverse_shell_, _credentials recovery_, découverte du réseau, ...) sont très répandues et ne sont pas très différentes de ce qui peut être employé dans la réalité. Notre objectif à présent va être de corriger le design réseau de l'entreprise _Target_ pour la rendre plus résiliente face à ce type d'attaque.
@@ -171,7 +172,7 @@ Bilan de l'attaque
 Avant de commencer, prenons quelques minutes pour nous raffraîchir la mémoire sur l'attaque mise en oeuvre précédemment.
 En enfilant la capuche du hacker, vous avez executé une chaîne d'attaque (_killchain_) qui pourrait se résumer ainsi :
 1. Accès initial : _spear phishing_ à l'attention du commercial
-2. Persistence sur le poste du commercial à l'aide d'un _reverse shell_
+2. Exécution sur le poste du commercial à l'aide d'un _reverse shell_
 3. Reconnaissance du réseau de votre victime à l'aide de _nmap_ que vous avez téléchargé depuis votre propre serveur web
 4. Latéralisation sur une machine d'intérêt à l'aide de _ssh_
 5. Recherche de la base client et de la comptabilité
@@ -205,12 +206,7 @@ Zoom sur la DMZ
 
 La notion de _DMZ_ (ou Zone Démilitarisée en français) est une notion qui vous est peut-être abstraite. Pourtant, c'est une notion clef en réseau et peut-être que sans le savoir, vous en avez déjà configurée une à la maison au travers de règles NAT. Je vous invite à prendre le temps de lire l'[article suivant](https://www.nexa.fr/blog/dmz-quest-ce-que-cest) afin de vous familiariser avec cette notion.
 
-Afin de s'assurer de votre bonne compréhension, prenez le temps de répondre aux questions suivantes afin de vous assurer que la notion est claire dans vos esprits :
-* Une DMZ est-elle exposée sur Internet ?
-* Une DMZ est-elle exposée sur le LAN ?
-* Une DMZ est-elle libre de communiquer avec le LAN ?
-* Une DMZ est-elle une zone de confiance ?
-* Une DMZ héberge-t-elle les données sensibles de l'entreprise ?
+* Expliquez pourquoi place-t-on un serveur exposé à Internet dans une DMZ et non dans le LAN  directement ?
 
 Carthographie de l'infrastructure
 ---------------------------------
@@ -238,11 +234,19 @@ Pour rappel, le réseau de l'entreprise est composé de ces différents élémen
 
 * Identifiez-vous plusieurs sous-réseaux dans l'architecture actuelle de la société _Target_ ?
 
-Lors de l'attaque, nous avons utilisé l'outil `nmap` afin de pouvoir énumérer les machines sur le réseau. C'est par ailleurs exactement ce qu'un attaquant ferait dans une telle situation pour faire de la reconnaissance. La facilité avec laquelle vous avez réussi à vous latéraliser sur le réseau réside dans un problème essentiel : le réseau de _Target_ est un réseau dit _à plat_. Concrètement, il n'y a aucune segmentation réseau : tous les équipements (poste de travail, serveurs, téléphones, DMZ, ...) sont tous connectés sur le même réseau, peuvent tous communiquer ensemble, sans aucune restriction, et peu importe leur criticié. De ce fait, lorsque vous avez utilisé `nmap`, vous avez pu découvrir en un clin d'oeil tout ce qui était présent sur le réseau, il ne vous restait plus qu'à pivoter sur la machine d'intérêt.
-Cette conception réseau - bien que fonctionnelle - ne répond pas aux enjeux de sécurité récents et ce type de conception est à proscrire.
+Matrice de flux
+---------------
+
+Pour rappel une matrice de flux permet de documenter les flux provenant d'une source et allant à une destination. Chaque ligne décrit **une source initiant une connexion vers une destination**. 
+
 
 Ségmentation réseau
 -------------------
+
+
+Lors de l'attaque, nous avons utilisé l'outil `nmap` afin de pouvoir énumérer les machines sur le réseau. C'est par ailleurs exactement ce qu'un attaquant ferait dans une telle situation pour faire de la reconnaissance. La facilité avec laquelle vous avez réussi à vous latéraliser sur le réseau réside dans un problème essentiel : le réseau de _Target_ est un réseau dit _à plat_. Concrètement, il n'y a aucune segmentation réseau : tous les équipements (poste de travail, serveurs, téléphones, DMZ, ...) sont tous connectés sur le même réseau, peuvent tous communiquer ensemble, sans aucune restriction, et peu importe leur criticié. De ce fait, lorsque vous avez utilisé `nmap`, vous avez pu découvrir en un clin d'oeil tout ce qui était présent sur le réseau, il ne vous restait plus qu'à pivoter sur la machine d'intérêt.
+Cette conception réseau - bien que fonctionnelle - ne répond pas aux enjeux de sécurité récents et ce type de conception est à proscrire.
+
 
 Pour répondre aux enjeux de sécurité, nous allons transformer le réseau de la société _Target_ d'un réseau à plat en un réseau segmenté.
 
@@ -250,18 +254,12 @@ Pour répondre aux enjeux de sécurité, nous allons transformer le réseau de l
 
 * Faites un diagramme de conception du nouveau réseau que vous préconiseriez. Faites apparaître les adresses IPs des différentes interfaces (y compris le routeur cette fois).
 
-Matrice de flux
----------------
-
-Maintenant que vous avez défini la nouvelle architecture réseau, nous allons devoir identifier précisément les flux entre les machines et les documenter afin de réaliser la matrice flux. Cette dernière sera notre support pour la 3ème séance afin d'implémenter cette nouvelle architecture réseau (et peut-être, améliorer la sécurité de la société _Target_).
-
-Pour rappel une matrice de flux permet de documenter les flux provenant d'une source et allant à une destination.
 
 Conclusion
 ----------
 
 
-Séance 3 - La remédiation
+Séance 3 - La remédiation [_Work in Progress_]
 =========================
 
 Premiers pas avec `iptables`
