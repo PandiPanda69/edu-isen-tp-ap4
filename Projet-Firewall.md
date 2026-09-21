@@ -161,7 +161,7 @@ Disclaimer
 _Attention, lui, il l'a fait pour de vrai..._
 
 
-Séance 2 - Le plan de remédiation [_Work in Progress_]
+Séance 2 - Le plan de remédiation
 =================================
 
 Lors de la séance précédente, vous avez déroulé un scénario d'attaque simple. Néanmoins, les techniques abordées (_spear phishing_, _reverse_shell_, _credentials recovery_, découverte du réseau, ...) sont très répandues et ne sont pas très différentes de ce qui peut être employé dans la réalité. Notre objectif à présent va être de corriger le design réseau de l'entreprise _Target_ pour la rendre plus résiliente face à ce type d'attaque.
@@ -228,7 +228,7 @@ Pour rappel, le réseau de l'entreprise est composé de ces différents élémen
 | target-commercial | Ordinateur du commercial. Il doit pouvoir accéder à l'intranet web. |
 | target-dev        | Ordinateur du développeur. Il doit pouvoir mettre à jour l'intranet à l'aide du protocole `ftp`. |
 | target-dmz        | Ensemble de services à l'interface entre le SI et le reste du monde. |
-| target-ldap       | Authentification centralisée, nécessaire à tous les postes du SI (y compris la DMZ). |
+| target-ldap       | Authentification centralisée à l'aide du protocol LDAP, nécessaire à tous les postes du SI (y compris la DMZ). |
 | target-filer      | Partage de fichiers s'appuyant sur `sshfs` qui doit être accessible à tous les postes clients internes. |
 | target-intranet   | Applications web internes, non accessibles au reste du monde. |
 
@@ -237,28 +237,44 @@ Pour rappel, le réseau de l'entreprise est composé de ces différents élémen
 Matrice de flux
 ---------------
 
-Pour rappel une matrice de flux permet de documenter les flux provenant d'une source et allant à une destination. Chaque ligne décrit **une source initiant une connexion vers une destination**. Cette matrice est indispensable afin de comprendre le fonctionnement du réseau en terme de flux. Etant donné que le réseau de la société _Target_ pré-existe, nous allons devoir faire la _rétro-ingénierie_ du réseau en identifiant les différents services et les différentes communications entre les machines. Les commandes `ss -lnptu` et et `netstat -lnpta` peuvent s'avérer très utiles dans votre quête ainsi que le tableau récapitulatif précédent.
+Maintenant que vous avez appréhendé l'architecture réseau de la société _Target_, nous pouvons passer à la matrice de flux comme étudiée en cours.
+
+Pour rappel une matrice de flux permet de documenter les flux provenant d'une source et allant à une destination. Chaque ligne décrit **une source initiant une connexion vers une destination**. Cette matrice est indispensable afin de comprendre le fonctionnement du réseau en terme de flux. Etant donné que le réseau de la société _Target_ pré-existe, nous allons devoir faire la _rétro-ingénierie_ du réseau en identifiant les différents services et les différentes communications entre les machines. Les commandes `ss -lnptu` et et `netstat -lnpta` peuvent s'avérer très utiles dans votre quête ainsi que le tableau récapitulatif précédent. Vous pouvez également utiliser `tcpdump` pour capturer le trafic afin de visualiser les flux.
+
+Dans le cadre de ce travail, votre matrice de flux devra contenir les informations suivantes:
+- Machine source
+- Machine de destination
+- Protocole et port
+- Sens (en précisiont qui initie la connexion)
 
 * Commencez par documentez les flux sur la DMZ en vous appuyant notamment sur vos travaux exploratoires des protocoles SMTP, IMAP et DNS. Identifiez les flux HTTP également.
+* En vous appuyant sur le tableau et vos constatations, remplissez le reste de la matrice de flux.
 
+>[!WARNING]
+>Un flux possible dans l'architecture actuelle n'est peut être pas un flux que nous souhaitons laisser possible dans le futur. Bien que dans notre scénario, nous n'aurons pas ce type de cas de figure, il est important de savoir identifier les anomalies lors de l'établissement de la matrice de flux pour venir les corriger.
 
 Ségmentation réseau
 -------------------
-
 
 Lors de l'attaque, nous avons utilisé l'outil `nmap` afin de pouvoir énumérer les machines sur le réseau. C'est par ailleurs exactement ce qu'un attaquant ferait dans une telle situation pour faire de la reconnaissance. La facilité avec laquelle vous avez réussi à vous latéraliser sur le réseau réside dans un problème essentiel : le réseau de _Target_ est un réseau dit _à plat_. Concrètement, il n'y a aucune segmentation réseau : tous les équipements (poste de travail, serveurs, téléphones, DMZ, ...) sont tous connectés sur le même réseau, peuvent tous communiquer ensemble, sans aucune restriction, et peu importe leur criticié. De ce fait, lorsque vous avez utilisé `nmap`, vous avez pu découvrir en un clin d'oeil tout ce qui était présent sur le réseau, il ne vous restait plus qu'à pivoter sur la machine d'intérêt.
 Cette conception réseau - bien que fonctionnelle - ne répond pas aux enjeux de sécurité récents et ce type de conception est à proscrire.
 
 
-Pour répondre aux enjeux de sécurité, nous allons transformer le réseau de la société _Target_ d'un réseau à plat en un réseau segmenté.
+Pour répondre aux enjeux de sécurité, nous allons transformer le réseau de la société _Target_ d'un réseau à plat en un réseau segmenté en nous appuyant directement sur la matrice de flux.
 
-* En vous appuyant sur le plan d'adressage que vous avez documenté précédemment, suggérez une liste de sous-réseaux qui conviendrait pour la société _Target_. Pour chaque sous-réseau, donnez lui un nom et détaillez quelles machines seraient reliées à ce réseau (en mettant le routeur de côté pour le moment). Définissez un sous-réseau IPv4 et IPv6 à chacun d'eux.
+* En vous appuyant sur la matrice de flux précédemment établie, suggérez une liste de sous-réseaux qui conviendrait pour la société _Target_ en regroupant les machines ayant des besoins similaires ensemble. Pour chaque sous-réseau, donnez lui un nom et détaillez quelles machines seraient reliées à ce réseau (en mettant le routeur de côté pour le moment). Définissez un sous-réseau IPv4 et IPv6 à chacun d'eux.
 
 * Faites un diagramme de conception du nouveau réseau que vous préconiseriez. Faites apparaître les adresses IPs des différentes interfaces (y compris le routeur cette fois).
 
 
 Conclusion
 ----------
+
+À l'issue de cette séance, vous devriez avoir une proposition d'architecture concrète permettant d'améliorer la sécurité du réseau de l'entreprise _Target_ avec deux livrables importants:
+- la matrice de flux
+- le diagramme de conception.
+
+Dans la séance suivante, nous allons venir implémenter ce nouveau réseau et nous assurer que la sécurité sera améliorée !
 
 
 Séance 3 - La remédiation [_Work in Progress_]
