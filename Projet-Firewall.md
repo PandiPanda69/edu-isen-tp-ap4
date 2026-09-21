@@ -237,7 +237,9 @@ Pour rappel, le réseau de l'entreprise est composé de ces différents élémen
 Matrice de flux
 ---------------
 
-Pour rappel une matrice de flux permet de documenter les flux provenant d'une source et allant à une destination. Chaque ligne décrit **une source initiant une connexion vers une destination**. 
+Pour rappel une matrice de flux permet de documenter les flux provenant d'une source et allant à une destination. Chaque ligne décrit **une source initiant une connexion vers une destination**. Cette matrice est indispensable afin de comprendre le fonctionnement du réseau en terme de flux. Etant donné que le réseau de la société _Target_ pré-existe, nous allons devoir faire la _rétro-ingénierie_ du réseau en identifiant les différents services et les différentes communications entre les machines. Les commandes `ss -lnptu` et et `netstat -lnpta` peuvent s'avérer très utiles dans votre quête ainsi que le tableau récapitulatif précédent.
+
+* Commencez par documentez les flux sur la DMZ en vous appuyant notamment sur vos travaux exploratoires des protocoles SMTP, IMAP et DNS. Identifiez les flux HTTP également.
 
 
 Ségmentation réseau
