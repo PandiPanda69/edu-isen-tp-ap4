@@ -277,25 +277,199 @@ Conclusion
 Dans la séance suivante, nous allons venir implémenter ce nouveau réseau et nous assurer que la sécurité sera améliorée !
 
 
-Séance 3 - La remédiation [_Work in Progress_]
+Séance 3 - La remédiation
 =========================
+
+Lors des séances précédentes vous avez réalisé une attaque exploitant différentes faiblesses du réseau de la société _Target_ puis vous avez travaillé à le renforcer, notamment en élaborant une matrice de flux puis en concevant une segmentation réseau.
+
+A présent, nous allons passer à la dernière étape, l'implémentation de votre segmentation réseau en manipulant `iptables`. Puis nous tenterons de rejouer l'attaque vue lors de la première séance pour nous assurer que le travail effectué permet d'améliorer la sécurité de l'entreprise _Target_.
 
 Premiers pas avec `iptables`
 ----------------------------
 
+En utilisant la page de manuel d'iptables, affichez l'ensemble des règles actives sur `target-router`. Vous devriez voir quelque chose qui ressemble à :
+
+```
+Chain FORWARD (policy DROP 0 packets, 0 bytes)
+ pkts bytes target     prot opt in     out     source               destination         
+    0     0 ACCEPT     all  --  eth0   eth1    0.0.0.0/0            100.80.1.2          
+    0     0 ACCEPT     all  --  eth0   eth1    0.0.0.0/0            0.0.0.0/0            state RELATED,ESTABLISHED
+    0     0 ACCEPT     all  --  eth1   eth0    0.0.0.0/0            0.0.0.0/0           
+
+Chain INPUT (policy ACCEPT 0 packets, 0 bytes)
+ pkts bytes target     prot opt in     out     source               destination         
+
+Chain OUTPUT (policy ACCEPT 0 packets, 0 bytes)
+ pkts bytes target     prot opt in     out     source               destination         
+```
+
+Vous voyez donc pour chaque chaîne :
+
+* la "policy" (comportement par défaut) ;
+* le nombre de paquets qui ont traversé les règles de la chaîne ;
+* le nombre d'octets correspondants.
+
+Pour le moment, peu de règles sont définies ; par la suite, cette commande vous permettra de lister l'ensemble des règles actives dans la table _filter_.
+
+### Première règle iptables
+
+Nous allons utiliser la machine "isp-a-hacker" afin de simuler un attaquant qui souhaiterait s'en prendre au réseau de l'entreprise "target". Ça devrait vous rappeler quelque chose.
+
+Vérifiez que vous pouvez vous connecter en SSH sur la machine "target-router" depuis la machine "isp-a-hacker" (`./mi-lxc.py attach isp-a-hacker`) :
+`ssh root@100.64.0.10`
+
+> L'IP _100.64.0.10_ est l'IP publique de "target-router". Vous pouvez le voir en faisant un `./mi-lxc.py print`
+
+Nous allons maintenant interdire toutes les connexions sur le port 22 (SSH). Pour cela, il faut interdire dans la chaîne INPUT les paquets TCP sur le
+port 22 avec la cible DROP.
+
+* Appliquez la règle avec la commande `iptables` sur "target-router" et détaillez-là. Essayez maintenant de vous connecter en SSH sur votre machine 
+"target-router" depuis la machine "isp-a-hacker".
+
+Nous avons ici utilisé l'action DROP. Vous pouvez constater que la connexion est bien refusée mais que le client SSH met un certain temps à s'en apercevoir.
+
+* Détaillez la règle `iptables` que vous avez appliquée.
+* Pourquoi le client SSH met un certains temps à répondre ?
+
+Supprimez la règle `iptables` précédemment créée.
+Appliquez la même règle en passant la cible de DROP à REJECT puis tentez à nouveau de vous connecter en SSH.
+
+* Quel changement observez-vous ? A votre avis pourquoi ? (n'hésitez pas à utiliser `tcpdump` pour comprendre ce qui se passe)
+
+### Priorité des règles
+
+Un même paquet peut correspondre à plusieurs règles de filtrage, éventuellement contradictoires : Netfilter applique les règles dans l'ordre et choisit
+systématiquement la première règle correspondant au paquet (attention, certains firewalls procèdent dans le sens contraire tandis que celui de Windows
+ne prend pas en compte l'ordre...). On parle alors de masquage de règles.
+
+Afin de tester ce comportement, nous allons utiliser les paramètres de filtrage de la [section "Critères" du Wikilivre](https://fr.wikibooks.org/wiki/Administration_r%C3%A9seau_sous_Linux/Netfilter#Crit%C3%A8res).
+
+* Montrez sur un exemple que l'ordre des règles compte. Pour modifier le filtrage, vous aurez besoin de supprimer des règles et d'en ajouter à des endroits spécifiques : référez-vous au manuel d'iptables.
+* Mettez en place un jeu de règles autorisant le SSH sur le routeur uniquement depuis le LAN de l'entreprise (testable depuis la machine "target-admin" par exemple).
+
+Dans la pratique, le masquage est souvent utilisé volontairement pour spécifier un cas général peu prioritaire et des cas particuliers plus prioritaires.
+Évidemment, c'est également source d'erreurs dans ces cas complexes.
+
+### Modules iptables
+
+`iptables` est extensible par un système de modules. Vous trouverez une description des modules existants dans le manuel de `iptables-extensions`.
+
+#### Comment
+
+Le module `comment`, comme son nom l'indique, permet d'associer un commentaire à une règle afin d'assurer la bonne compréhension par tous des règles en
+place. Pour utiliser le module :
+`iptables -A INPUT -m comment --comment "Ceci est un commentaire" -j...`
+
+#### Multiport
+
+Le module multiport permet de créer une règle unique correspondant à plusieurs ports (plutôt que plusieurs règles) : 
+`iptables -A INPUT -m multiport -p tcp --dports port1,port2,port3 -j...`
+
+* Créez une règle avec multiport autorisant les ports 22 et 53. N'hésitez pas à ajouter un commentaire pour y voir plus clair (plusieurs modules peuvent être
+utilisés simultanément).
+
+#### Suivi de connexion ("state")
+
+Netfilter permet le suivi des connexions via le module "state" (firewall _stateful_). Ce module permet d'identifier les nouveaux flux, les flux établis et
+les flux liés à un autre flux. Ce suivi de connexion permet d'affiner le filtrage de certains protocoles.
+
+Le module "state" définit plusieurs états possibles pour les flux réseau, dont :
+
+* NEW : c'est une nouvelle connexion
+* ESTABLISHED : cette connexion est déjà connue (elle est passée par l'état NEW il y a peu de temps)
+* RELATED : cette connexion est liée ou dépendante d'une connexion déjà ESTABLISHED. Attention, seul le premier paquet d'une connexion peut être RELATED,
+les suivants sont ESTABLISHED. Essentiellement utilisé pour le protocole FTP.
+
+Par exemple, la règle déjà existante dans la chaîne FORWARD :
+`    0     0 ACCEPT     all  --  eth0   eth1    0.0.0.0/0            0.0.0.0/0            state RELATED,ESTABLISHED` signifie que seulement les paquets `RELATED` ou `ESTABLISHED` sont autorisés de `eth0` vers `eth1`, ie, seules les "réponses" peuvent passer dans ce sens.
+
+Pour voir l'effet de la question suivante, tout d'abord bloquez tout en sortie avec cette politique : `iptables -P OUTPUT DROP`
+
+Puis créez une règle pour autoriser, en sortie du firewall, uniquement les réponses à des connexions SSH entrantes (à destination du service SSH sur le firewall).
+
+* Explicitez la règle mise en place.
+
+
 Implémentation de la ségmentation réseau
 ----------------------------------------
 
-Implémentation du routage
-------------------------
+En vous appuyant sur votre travail de la session précédente, nous allons passer à l'implémentation de la politique réseau au niveau routage et pare-feu.
+
+Pour implémenter votre matrice de flux sur la machine `target-router`. Vous aurez besoin de procéder en deux étapes.
+
+### Avec snster
+
+* Segmentez le réseau "target" :
+    * Éditez `~/mi-lxc/target/group.yml` pour spécifier les interfaces sur le routeur. Il faut ajouter des interfaces sur de nouveaux bridges et découper l'espace `100.80.0.1/16`. Enfin, il faut ajouter les interfaces eth2, eth3... ainsi créées à la liste des `asdev` definies dans le template `bgprouter` de la machine router.
+    * Modifiez les adresses des interfaces et les bridges des machines internes dans ce même fichier. Vous devrez aussi mettre à jour les serveurs mentionnés dans les paramètres des templates `ldapclient`, `sshfs` et `resolv`, soit en remplaçant les noms de serveurs par leurs nouvelles adresses IP, soit en mettant à jour les enregistrements DNS correspondants (fichier `/etc/nsd/target.milxc.zone` sur `target-dmz`)
+    * Exécutez `snster print` pour visualiser la topologie redéfinie
+    * Exécutez `snster stop && snster renet && snster start` pour mettre à jour l'infrastructure déployée
+
+### Avec mi-lxc.py
+
+* Segmenter le réseau "target" :
+	* Éditer `global.json` (dans le dossier `mi-lxc`) pour spécifier les interfaces sur le routeur, dans la section "target".
+	Il faut ajouter des _bridges_ (dont le nom doit commencer par "target-") et découper l'espace `100.80.0.1/16`. Enfin, il faut ajouter les interfaces
+	eth2, eth3... ainsi créées à la liste des `asdev` definie juste au-dessus (avec des ';' de séparation entre interfaces)
+	* Éditer `groups/target/local.json` pour modifier les adresses des interfaces et les bridges des machines internes (attention, pour un bridge nommé
+	précédemment `target-dmz`, il faut simplement écrire "dmz" ici, la partie "target-" est ajoutée automatiquement). Dans le même fichier vous devrez
+	aussi mettre à jour les serveurs mentionnés dans les paramètres des templates `ldapclient`, `sshfs` et `nodhcp`, soit en remplaçant les noms de
+	serveurs par leurs nouvelles adresses IP, soit en mettant à jour les enregistrements DNS correspondants (fichier `/etc/nsd/target.milxc.zone` sur
+	`target-dmz`)
+	* Exécuter `./mi-lxc.py print` pour visualiser la topologie redéfinie
+	* Exécuter `./mi-lxc.py stop && ./mi-lxc.py renet && ./mi-lxc.py start` pour mettre à jour l'infrastructure déployée
+
+### Pour finir
+
+* Implémenter de manière adaptée les commandes `iptables` sur la machine "target-router" (dans la chaîne `FORWARD`) en vous appuyant sur votre matrice de flux. Si possible dans un script (qui nettoie les règles au début), en cas d'erreur. (Vous pouvez utiliser les commandes `iptables-save` et `iptables-apply` notamment).
+
+> L'arborescence de MI-LXC et les fichiers json manipulés ici sont décrits [ici](https://github.com/flesueur/mi-lxc#how-to-extend).
+
+* Dans votre rapport, prenez une capture d'écran de la commande `print`  affichant la nouvelle infrastructure réseau puis une capture d'écran des règles iptables implémentées.
 
 Verdict final - le rejeu
 ------------------------
 
+Nous allons nous assurer que la segmentation permet de rendre plus difficile la chaîne d'attaque mise en oeuvre lors de la première séance. Etant donné que nous n'avons eu aucun impact sur les mails, nous allons commencer directement par l'execution du script malveillant sur la machine du commercial.
+
+* Détaillez ce qui échoue à présent.
+
 Contournement par tunnel
 ------------------------
+
+La segmentation réseau et l'implémentation d'une politique de parefeu s'appuyant sur la matrice de flux sont un combo redoutable pour se prémunir des attaques "simples". Néanmoins, il est possible de contourner ces mesures par l'utilisation de tunnel.
+
+Imaginez que vous êtes le développeur et que vous souhaitez fournir un accès au serveur web interne `target-intranet` à un
+client externe, alors que celui-ci n'est normalement pas accessible de l'externe ! Vous allez créer un tunnel pour contourner la politique de sécurité.
+Vous disposez pour cela des machines `target-dev` (votre poste de travail interne) et `isp-a-home` (une machine extérieure, à votre domicile).
+
+Nous allons utiliser l'outil `netcat` pour établir un tunnel très simple.
+
+Connectez-vous sur la machine `isp-a-home`. Nous allons commencer par éteindre le service _Apache_ en écoute pour libérer le port 80 qui nous sera utile
+puis nous allons écouter les connexions sur le port HTTP (TCP/80).
+```bash
+service apache2 stop
+while true; do nc -v -l -p 80 -c "nc -l -p 8080"; done
+```
+
+Enfin, côté "target-dev", nous mettons en place la connexion sortante vers la machine distante:
+```bash
+while true; do nc -v 100.120.0.3 80 -c "nc 100.80.0.5 80"; sleep 2; done
+```
+
+>Pour rappel :
+>* 100.120.0.3 = isp-a-home
+>* 100.80.0.5 = target-intranet
+
+Testez (avec la machine du hacker) que vous pouvez bien accéder au serveur intranet depuis l'externe sans aucun contrôle via l'URL `http://100.120.0.3:8080`
+
+* A l'aide d'un schéma, expliquez ce phénomène.
+
+Il est très difficile de bloquer ou même détecter les tunnels (imaginez un tunnel chiffré par SSH, ou qui mime une apparence de HTTP, etc.)
 
 Conclusion
 ----------
 
+Après ces 3 séances, vous avez pu voir de bout en bout les tenants et aboutissants d'une bonne segmentation réseau et l'importance de la matrice de flux dans le processus. 
 
+**N'oubliez pas de fournir votre rendu par mail.**
